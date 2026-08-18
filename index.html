@@ -3,10 +3,201 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Q·RADAR 测试</title>
+  <meta name="description" content="Q·RADAR 全国量子信息与安全课题机会追踪">
+  <title>Q·RADAR｜全国量子信息与安全课题机会追踪</title>
+  <style>
+    :root{
+      --bg:#f7f8fa;--paper:#fff;--ink:#111317;--muted:#68707b;--line:#e3e6ea;
+      --line2:#d3d7dd;--blue:#0b57d0;--blue2:#eef4ff;--green:#18794e;--green2:#ecf8f1;
+      --amber:#9a6700;--amber2:#fff7df;--gray:#f1f3f5;--radius:14px;--shadow:0 8px 28px rgba(17,19,23,.05)
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;line-height:1.65}
+    a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .topbar-inner{max-width:1180px;margin:0 auto;padding:0 24px;min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+    .brand{display:inline-flex;align-items:baseline;gap:8px;color:var(--ink);font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+    .brand-mark{font-size:22px}.brand-cn{font-size:15px;font-weight:650;color:#3f4650}
+    .nav{display:flex;align-items:center;gap:22px;font-size:14px;overflow-x:auto;white-space:nowrap}.nav a{color:#444b55}.nav a:hover{color:var(--ink);text-decoration:none}
+    .shell{max-width:1180px;margin:0 auto;padding:56px 24px 80px}
+    .hero{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:48px 50px 42px;box-shadow:var(--shadow)}
+    .eyebrow{margin:0 0 14px;font-size:13px;letter-spacing:.11em;color:#515965;font-weight:700}
+    h1{margin:0;max-width:920px;font-size:clamp(34px,5vw,58px);line-height:1.13;letter-spacing:-.045em;font-weight:820}
+    .hero-copy{max-width:850px;margin:22px 0 0;color:#3f4650;font-size:17px}
+    .hero-meta{margin-top:26px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;color:var(--muted);font-size:13px}
+    .status-dot{width:8px;height:8px;border-radius:999px;background:var(--green);display:inline-block;margin-right:7px}
+    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:18px}
+    .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+    .stat-value{font-size:28px;font-weight:780;letter-spacing:-.03em}.stat-label{margin-top:2px;font-size:12px;color:var(--muted)}
+    section{scroll-margin-top:84px}.section{margin-top:54px}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px}
+    .section-kicker{margin:0 0 4px;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    h2{margin:0;font-size:28px;letter-spacing:-.025em}.section-note{color:var(--muted);font-size:13px}
+    .filters{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:grid;grid-template-columns:minmax(210px,1.8fr) repeat(4,minmax(125px,1fr));gap:10px;margin-bottom:14px}
+    .control{width:100%;min-height:42px;border:1px solid var(--line2);background:#fff;color:var(--ink);border-radius:9px;padding:8px 11px;outline:none}
+    .control:focus{border-color:#8fb4ef;box-shadow:0 0 0 3px #edf4ff}
+    .result-line{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font-size:13px;margin:10px 2px 12px}
+    .cards{display:grid;gap:12px}.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;transition:.16s}
+    .card:hover{border-color:#c8ced6;transform:translateY(-1px);box-shadow:0 8px 24px rgba(17,19,23,.045)}
+    .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:22px}.card-title{margin:0;font-size:19px;line-height:1.48;letter-spacing:-.012em}
+    .card-title a{color:var(--ink)}.card-title a:hover{color:var(--blue);text-decoration:none}
+    .badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}.badge{display:inline-flex;align-items:center;min-height:25px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap;background:var(--gray);color:#555d67}
+    .badge.open{color:var(--green);background:var(--green2)}.badge.upcoming{color:var(--amber);background:var(--amber2)}.badge.closed{color:#6b7280;background:var(--gray)}.badge.featured{color:var(--blue);background:var(--blue2)}
+    .attention{flex:0 0 auto;color:#373d46;font-size:12px;text-align:right;max-width:230px}.summary{margin:12px 0 0;color:#4c535d;font-size:14px}
+    .meta-row{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:14px;color:var(--muted);font-size:12px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+    .tag{color:#48505b;background:#f6f7f8;border:1px solid #eceef1;border-radius:6px;padding:2px 7px;font-size:11px}
+    .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:#fafbfc;color:#5c6470;font-size:11px;letter-spacing:.03em;font-weight:750}td{font-size:13px;color:#333943}tbody tr:last-child td{border-bottom:0}.team-title{font-weight:650;color:var(--ink)}
+    .coverage-grid{display:grid;grid-template-columns:1.05fr 1.95fr;gap:14px}.coverage-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+    .coverage-numbers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}.mini-stat{background:#f8f9fa;border-radius:10px;padding:14px}.mini-stat strong{display:block;font-size:23px}.mini-stat span{color:var(--muted);font-size:11px}
+    .failure-list{margin:14px 0 0;padding:0;list-style:none}.failure-list li{display:grid;grid-template-columns:1fr auto;gap:18px;padding:10px 0;border-top:1px solid var(--line);font-size:12px;color:#4a515c}.failure-code{color:#8a5b00;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .method-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.method-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px}.method-card h3{margin:0 0 10px;font-size:17px}.method-card p,.method-card li{color:#4e5661;font-size:13px}.method-card ul{margin:8px 0 0;padding-left:18px}
+    .flow{margin-top:14px;padding:14px 16px;background:#f8f9fa;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.8;color:#404751}
+    .empty,.loading,.error{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;color:var(--muted);text-align:center}.error{color:#8b3a3a;background:#fffafa}
+    footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    @media(max-width:900px){.topbar-inner{align-items:flex-start;flex-direction:column;gap:6px;padding-top:12px;padding-bottom:10px}.nav{width:100%;padding-bottom:2px}.shell{padding-top:28px}.hero{padding:32px 26px}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.filters .search{grid-column:1/-1}.coverage-grid,.method-grid{grid-template-columns:1fr}}
+    @media(max-width:580px){.shell{padding-left:14px;padding-right:14px}.topbar-inner{padding-left:14px;padding-right:14px}.hero{padding:27px 20px;border-radius:16px}h1{font-size:36px}.stats{grid-template-columns:1fr 1fr}.stat{padding:14px}.filters{grid-template-columns:1fr}.filters .search{grid-column:auto}.card{padding:18px}.card-top{display:block}.attention{text-align:left;margin-top:10px;max-width:none}}
+  </style>
 </head>
 <body>
-  <h1>Q·RADAR 量子课题雷达</h1>
-  <p>GitHub Pages 国内访问测试成功。</p>
+<header class="topbar"><div class="topbar-inner">
+  <a class="brand" href="#top"><span class="brand-mark">Q·RADAR</span><span class="brand-cn">量子课题雷达</span></a>
+  <nav class="nav" aria-label="主导航"><a href="#opportunities">申报机会</a><a href="#teams">获批团队</a><a href="#coverage">来源覆盖</a><a href="#methodology">方法说明</a></nav>
+</div></header>
+
+<main id="top" class="shell">
+  <section class="hero">
+    <p class="eyebrow">QUANTUM OPPORTUNITY INTELLIGENCE</p>
+    <h1>全国量子信息与安全课题机会追踪</h1>
+    <p class="hero-copy">聚合官方公开来源，持续整理课题指南、征求意见与获批团队动态，为科研选题、项目申报和产业合作提供可追溯的全国视角。数据由 Cloudflare 后台抓取，页面通过 GitHub Pages 发布静态快照。</p>
+    <div class="hero-meta"><span><span class="status-dot"></span>每日自动更新</span><span id="last-sync">正在读取最新快照</span><span id="data-mode"></span></div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-value" id="stat-total">…</div><div class="stat-label">收录申报机会</div></div>
+    <div class="stat"><div class="stat-value" id="stat-open">…</div><div class="stat-label">正在申报</div></div>
+    <div class="stat"><div class="stat-value" id="stat-upcoming">…</div><div class="stat-label">待发布申报</div></div>
+    <div class="stat"><div class="stat-value" id="stat-sources">…</div><div class="stat-label">监测来源端点</div></div>
+    <div class="stat"><div class="stat-value" id="stat-teams">…</div><div class="stat-label">已核验获批团队</div></div>
+  </div>
+
+  <section id="opportunities" class="section">
+    <div class="section-head"><div><p class="section-kicker">Opportunity Radar</p><h2>申报机会</h2></div><div class="section-note">优先展示正在申报与即将发布项目</div></div>
+    <div class="filters">
+      <input id="q" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
+      <select id="stage" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
+      <select id="level" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
+      <select id="province" class="control"><option value="">全部地区</option></select>
+      <select id="topic" class="control"><option value="">全部方向</option></select>
+    </div>
+    <div class="result-line"><span id="result-count">正在加载</span><span>点击项目标题查看官方来源</span></div>
+    <div id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
+  </section>
+
+  <section id="teams" class="section">
+    <div class="section-head"><div><p class="section-kicker">Approved Teams</p><h2>已获批团队监测</h2></div><div class="section-note">用于观察已获批方向、承担单位与区域分布</div></div>
+    <div class="panel table-wrap"><table><thead><tr><th>项目或专项</th><th>承担单位</th><th>负责人</th><th>获批课题</th><th>研究方向</th><th>地区</th><th>公开时间</th></tr></thead>
+      <tbody id="team-body"><tr><td colspan="7">正在读取获批团队快照…</td></tr></tbody></table></div>
+  </section>
+
+  <section id="coverage" class="section">
+    <div class="section-head"><div><p class="section-kicker">Source Coverage</p><h2>来源覆盖</h2></div><div class="section-note" id="coverage-time"></div></div>
+    <div class="coverage-grid">
+      <div class="coverage-card"><strong>监测规模</strong><div class="coverage-numbers">
+        <div class="mini-stat"><strong id="active-sources">…</strong><span>活跃来源</span></div>
+        <div class="mini-stat"><strong id="pending-sources">…</strong><span>待扩展来源</span></div>
+        <div class="mini-stat"><strong id="national-sources">…</strong><span>国家级来源</span></div>
+        <div class="mini-stat"><strong id="regional-sources">…</strong><span>省市级来源</span></div>
+      </div></div>
+      <div class="coverage-card"><strong>近期抓取异常</strong><div style="margin-top:5px;color:var(--muted);font-size:12px">部分官网存在 robots 限制或临时 403，系统保留失败记录，避免把抓取失败误判为“无新通知”。</div>
+        <ul id="failure-list" class="failure-list"><li><span>正在读取运行记录…</span><span></span></li></ul></div>
+    </div>
+  </section>
+
+  <section id="methodology" class="section">
+    <div class="section-head"><div><p class="section-kicker">Methodology</p><h2>数据口径与方法说明</h2></div></div>
+    <div class="method-grid">
+      <article class="method-card"><h3>1. 数据链路</h3><p>后台按计划访问国家、省级和市级科技主管部门、实验室及其他公开来源。核验后的公开数据由 API 生成快照，GitHub Actions 定时拉取快照并发布到 GitHub Pages。</p><div class="flow">官方公开来源 → Cloudflare 抓取与 D1 数据库 → 公共 JSON 快照 → GitHub Actions → GitHub Pages</div></article>
+      <article class="method-card"><h3>2. 收录范围</h3><ul><li>量子通信、量子计算、量子精密测量及关键材料器件相关课题。</li><li>网络安全、数据安全、抗量子密码等与量子安全产业存在直接关联的项目。</li><li>正式指南、征求意见、申报通知、项目建议征集，以及可用于研判后续申报机会的公开信息。</li></ul></article>
+      <article class="method-card"><h3>3. 阶段定义</h3><ul><li><strong>正在申报：</strong>存在明确申报窗口或截止时间。</li><li><strong>待发布：</strong>指南征求意见、项目建议征集等已释放后续正式申报信号。</li><li><strong>已截止：</strong>已超过公开申报截止时间，继续保留用于历史规律和年度预测。</li></ul></article>
+      <article class="method-card"><h3>4. 使用边界</h3><p>页面用于机会发现和辅助研判。申报资格、任务指标、预算、截止时间等关键事项，应以项目主管部门最新正式通知及申报系统为准。来源抓取受官网可访问性影响，异常会在“来源覆盖”中留痕。</p></article>
+    </div>
+  </section>
+
+  <footer><span>Q·RADAR 量子课题雷达</span><span id="footer-meta">静态快照由 GitHub Pages 提供</span></footer>
+</main>
+
+<script>
+const state={opportunities:[],teams:[],coverage:null,metadata:null};
+const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
+const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
+
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function fmtDate(v,withTime=false){
+  if(!v)return'未注明';const d=new Date(v);if(Number.isNaN(d.getTime()))return esc(v);
+  return new Intl.DateTimeFormat('zh-CN',withTime?{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}:{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(d).replaceAll('/','-')
+}
+function deadlineText(x){if(!x.deadlineAt)return x.stage==='upcoming'?'正式申报待发布':'未注明截止时间';return`截止 ${fmtDate(x.deadlineAt,true)}`}
+function sortOpportunities(items){
+  const rank={open:0,upcoming:1,closed:2};
+  return[...items].sort((a,b)=>{const r=(rank[a.stage]??9)-(rank[b.stage]??9);if(r)return r;if(!!a.featured!==!!b.featured)return a.featured?-1:1;return String(b.publishedAt??'').localeCompare(String(a.publishedAt??''))})
+}
+function renderOpportunities(){
+  const q=document.querySelector('#q').value.trim().toLowerCase(),stage=document.querySelector('#stage').value,level=document.querySelector('#level').value,province=document.querySelector('#province').value,topic=document.querySelector('#topic').value;
+  const filtered=sortOpportunities(state.opportunities).filter(x=>{
+    const hay=[x.projectName,x.authority,x.summary,x.province,x.city,...(x.topicTags||[])].join(' ').toLowerCase();
+    return(!q||hay.includes(q))&&(!stage||x.stage===stage)&&(!level||x.level===level)&&(!province||x.province===province)&&(!topic||(x.topicTags||[]).includes(topic))
+  });
+  document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
+  const host=document.querySelector('#opportunity-list');
+  if(!filtered.length){host.innerHTML='<div class="empty">当前筛选条件下没有结果。</div>';return}
+  host.innerHTML=filtered.map(x=>`<article class="card"><div class="card-top"><div style="min-width:0"><div class="badges"><span class="badge ${esc(x.stage)}">${esc(stageMap[x.stage]||x.stage||'未分类')}</span><span class="badge">${esc(levelMap[x.level]||x.level||'未分类')}</span>${x.featured?'<span class="badge featured">重点关注</span>':''}</div><h3 class="card-title"><a href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectName)}</a></h3></div><div class="attention">${esc(x.rawAttention||deadlineText(x))}</div></div><p class="summary">${esc(x.summary||'暂无摘要')}</p><div class="meta-row"><span>发布机构：${esc(x.authority||'未注明')}</span><span>发布时间：${esc(fmtDate(x.publishedAt))}</span><span>地区：${esc([x.province,x.city].filter(Boolean).join(' · ')||'全国')}</span><span>${esc(deadlineText(x))}</span></div><div class="tags">${(x.topicTags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></article>`).join('')
+}
+function renderTeams(){
+  const body=document.querySelector('#team-body');if(!state.teams.length){body.innerHTML='<tr><td colspan="7">暂无已核验团队数据。</td></tr>';return}
+  body.innerHTML=[...state.teams].sort((a,b)=>String(b.newsPublishedAt||'').localeCompare(String(a.newsPublishedAt||''))).map(x=>`<tr><td>${esc(x.programName||'')}</td><td>${esc(x.institution||'')}</td><td>${esc(x.teamLeader||'未公开')}</td><td><a class="team-title" href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectTitle||'')}</a></td><td>${esc(x.researchDirection||'')}</td><td>${esc([x.province,x.city].filter(Boolean).join(' · ')||'')}</td><td>${esc(fmtDate(x.newsPublishedAt))}</td></tr>`).join('')
+}
+function renderCoverage(){
+  const c=state.coverage||{};
+  document.querySelector('#active-sources').textContent=c.activeSourceCount??'…';
+  document.querySelector('#pending-sources').textContent=c.pendingDiscoveryCount??'…';
+  document.querySelector('#national-sources').textContent=c.byLevel?.national??'…';
+  document.querySelector('#regional-sources').textContent=(c.byLevel?.provincial??0)+(c.byLevel?.municipal??0);
+  document.querySelector('#stat-sources').textContent=c.sourceEndpointCount??'…';
+  document.querySelector('#coverage-time').textContent=c.lastCompletedRunAt?`最近一次抓取完成于 ${fmtDate(c.lastCompletedRunAt,true)}`:'';
+  const failures=c.failedSources||[];
+  document.querySelector('#failure-list').innerHTML=failures.length?failures.map(x=>`<li><span>${esc(x.sourceId)} · ${esc(fmtDate(x.finishedAt,true))}</span><span class="failure-code">${esc(x.errorSummary||x.status)}</span></li>`).join(''):'<li><span>近期没有记录到抓取异常。</span><span></span></li>'
+}
+function fillFilters(){
+  const provinces=[...new Set(state.opportunities.map(x=>x.province).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
+  const topics=[...new Set(state.opportunities.flatMap(x=>x.topicTags||[]))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
+  document.querySelector('#province').insertAdjacentHTML('beforeend',provinces.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''));
+  document.querySelector('#topic').insertAdjacentHTML('beforeend',topics.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''))
+}
+function renderStats(){
+  document.querySelector('#stat-total').textContent=state.opportunities.length;
+  document.querySelector('#stat-open').textContent=state.opportunities.filter(x=>x.stage==='open').length;
+  document.querySelector('#stat-upcoming').textContent=state.opportunities.filter(x=>x.stage==='upcoming').length;
+  document.querySelector('#stat-teams').textContent=state.teams.length
+}
+async function load(){
+  try{
+    const [o,c,t,m]=await Promise.all([fetch('data/opportunities.json',{cache:'no-store'}),fetch('data/coverage.json',{cache:'no-store'}),fetch('data/approved-teams.json',{cache:'no-store'}),fetch('data/metadata.json',{cache:'no-store'})]);
+    if(![o,c,t,m].every(r=>r.ok))throw new Error('快照文件读取失败');
+    const [oj,cj,tj,mj]=await Promise.all([o.json(),c.json(),t.json(),m.json()]);
+    state.opportunities=oj.items||[];state.coverage=cj;state.teams=tj.items||[];state.metadata=mj;
+    fillFilters();renderStats();renderOpportunities();renderTeams();renderCoverage();
+    const syncAt=oj.lastSuccessfulSyncAt||cj.lastSuccessfulSyncAt||mj.generatedAt;
+    document.querySelector('#last-sync').textContent=syncAt?`最近成功同步 ${fmtDate(syncAt,true)}`:'已读取静态快照';
+    document.querySelector('#data-mode').textContent=oj.dataMode?`数据模式：${oj.dataMode}`:'';
+    document.querySelector('#footer-meta').textContent=`页面快照生成于 ${fmtDate(mj.generatedAt,true)} · GitHub Pages`
+  }catch(err){
+    console.error(err);document.querySelector('#opportunity-list').innerHTML='<div class="error">页面已打开，但数据快照暂时读取失败。请稍后刷新。</div>';document.querySelector('#result-count').textContent='数据读取失败'
+  }
+}
+['q','stage','level','province','topic'].forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',renderOpportunities));
+load();
+</script>
 </body>
 </html>
