@@ -786,7 +786,7 @@ function renderCoverage(){
   document.querySelector('#pending-sources').textContent=c.pendingDiscoveryCount??'…';
   document.querySelector('#national-sources').textContent=c.byLevel?.national??'…';
   document.querySelector('#regional-sources').textContent=(c.byLevel?.provincial??0)+(c.byLevel?.municipal??0);
-  document.querySelector('#stat-sources').textContent=c.sourceEndpointCount??'…';
+  document.querySelector('#hero-sources').textContent=c.sourceEndpointCount??'…';
   document.querySelector('#coverage-time').textContent=c.lastCompletedRunAt?`最近一次抓取完成于 ${fmtDate(c.lastCompletedRunAt,true)}`:'';
   const failures=c.failedSources||[];
   document.querySelector('#failure-list').innerHTML=failures.length?failures.map(x=>`<li><span>${esc(x.sourceId)} · ${esc(fmtDate(x.finishedAt,true))}</span><span class="failure-code">${esc(x.errorSummary||x.status)}</span></li>`).join(''):'<li><span>近期没有记录到抓取异常。</span><span></span></li>'
