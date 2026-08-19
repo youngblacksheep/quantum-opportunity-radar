@@ -544,6 +544,254 @@ body{
     white-space:nowrap;
   }
 }
+/* ===== 申报机会门户卡片 V3 ===== */
+
+.cards{
+  gap:12px;
+}
+
+.portal-card{
+  display:grid;
+  grid-template-columns:112px minmax(0,1.4fr) minmax(430px,.95fr);
+  gap:24px;
+  align-items:center;
+  min-height:150px;
+  padding:22px 24px 20px 18px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  transition:.16s ease;
+}
+
+.portal-card:hover{
+  transform:translateY(-1px);
+  box-shadow:0 9px 26px rgba(29,48,78,.055);
+}
+
+/* 三种层级颜色 */
+.portal-card.level-national{
+  background:#fff9f0;
+  border-color:#efcf9e;
+}
+
+.portal-card.level-provincial{
+  background:#f1fbf8;
+  border-color:#c6e7dc;
+}
+
+.portal-card.level-municipal{
+  background:#f4f5ff;
+  border-color:#d2d6f7;
+}
+
+.portal-card.level-unknown{
+  background:#fff;
+}
+
+/* 左侧层级图标区域 */
+.portal-level{
+  align-self:stretch;
+  min-height:108px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border-radius:12px;
+}
+
+.level-national .portal-level{
+  background:#fff0d8;
+  color:#d67b00;
+}
+
+.level-provincial .portal-level{
+  background:#dff5ef;
+  color:#079473;
+}
+
+.level-municipal .portal-level{
+  background:#e7e8ff;
+  color:#5955d9;
+}
+
+.portal-level svg{
+  width:36px;
+  height:36px;
+  stroke:currentColor;
+}
+
+.portal-level-name{
+  font-size:13px;
+  font-weight:800;
+}
+
+/* 卡片主体 */
+.portal-body{
+  min-width:0;
+}
+
+.portal-flags{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-bottom:7px;
+}
+
+.portal-card .badge{
+  min-height:23px;
+  font-size:10px;
+  padding:2px 7px;
+}
+
+.portal-title{
+  margin:0;
+  font-size:18px;
+  line-height:1.42;
+  font-weight:780;
+  letter-spacing:-.01em;
+}
+
+.portal-title a{
+  color:#151a22;
+}
+
+.portal-title a:hover{
+  color:#0b57d0;
+  text-decoration:none;
+}
+
+.portal-summary{
+  margin:9px 0 0;
+  max-width:720px;
+  color:#646c77;
+  font-size:12.5px;
+  line-height:1.7;
+}
+
+.portal-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:12px;
+}
+
+.portal-tags .tag{
+  background:rgba(255,255,255,.62);
+  font-size:10px;
+}
+
+/* 右侧信息 */
+.portal-side{
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.portal-meta-grid{
+  display:grid;
+  grid-template-columns:1.45fr 1fr 1fr .85fr;
+  gap:15px;
+}
+
+.portal-meta-item{
+  min-width:0;
+}
+
+.portal-meta-label{
+  display:block;
+  margin-bottom:5px;
+  color:#8a929e;
+  font-size:10px;
+  white-space:nowrap;
+}
+
+.portal-meta-value{
+  display:block;
+  color:#3d4550;
+  font-size:11.5px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+
+.portal-card-footer{
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+}
+
+.portal-detail{
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.level-national .portal-detail{
+  color:#d27600;
+}
+
+.level-provincial .portal-detail{
+  color:#078866;
+}
+
+.level-municipal .portal-detail{
+  color:#514dce;
+}
+
+/* 层级标签颜色 */
+.portal-card .level-badge.national{
+  color:#a25a00;
+  background:#ffedd0;
+}
+
+.portal-card .level-badge.provincial{
+  color:#08785c;
+  background:#dcf4ec;
+}
+
+.portal-card .level-badge.municipal{
+  color:#514cc8;
+  background:#e6e7ff;
+}
+
+@media(max-width:1100px){
+  .portal-card{
+    grid-template-columns:96px 1fr;
+  }
+
+  .portal-side{
+    grid-column:2;
+  }
+}
+
+@media(max-width:700px){
+  .portal-card{
+    grid-template-columns:1fr;
+    padding:16px;
+  }
+
+  .portal-level{
+    min-height:auto;
+    flex-direction:row;
+    justify-content:flex-start;
+    padding:10px 13px;
+  }
+
+  .portal-level svg{
+    width:24px;
+    height:24px;
+  }
+
+  .portal-side{
+    grid-column:auto;
+  }
+
+  .portal-meta-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
   </style>
 </head>
 <body>
@@ -765,16 +1013,153 @@ function sortOpportunities(items){
   const rank={open:0,upcoming:1,closed:2};
   return[...items].sort((a,b)=>{const r=(rank[a.stage]??9)-(rank[b.stage]??9);if(r)return r;if(!!a.featured!==!!b.featured)return a.featured?-1:1;return String(b.publishedAt??'').localeCompare(String(a.publishedAt??''))})
 }
+function levelIcon(level){
+  if(level==='national'){
+    return `<svg viewBox="0 0 48 48" fill="none">
+      <path d="M8 18L24 9l16 9"/>
+      <path d="M11 19h26"/>
+      <path d="M14 21v14M21 21v14M28 21v14M35 21v14"/>
+      <path d="M9 37h30M6 41h36"/>
+    </svg>`
+  }
+
+  if(level==='provincial'){
+    return `<svg viewBox="0 0 48 48" fill="none">
+      <path d="M24 43s13-12.1 13-24A13 13 0 1 0 11 19c0 11.9 13 24 13 24Z"/>
+      <circle cx="24" cy="19" r="5"/>
+    </svg>`
+  }
+
+  return `<svg viewBox="0 0 48 48" fill="none">
+    <path d="M8 40h32"/>
+    <path d="M12 40V16l12-7 12 7v24"/>
+    <path d="M18 20h4v5h-4zM27 20h4v5h-4zM18 29h4v5h-4zM27 29h4v5h-4z"/>
+  </svg>`
+}
+
 function renderOpportunities(){
-  const q=document.querySelector('#q').value.trim().toLowerCase(),stage=document.querySelector('#stage').value,level=document.querySelector('#level').value,province=document.querySelector('#province').value,topic=document.querySelector('#topic').value;
+  const q=document.querySelector('#q').value.trim().toLowerCase();
+  const stage=document.querySelector('#stage').value;
+  const level=document.querySelector('#level').value;
+  const province=document.querySelector('#province').value;
+  const topic=document.querySelector('#topic').value;
+
   const filtered=sortOpportunities(state.opportunities).filter(x=>{
-    const hay=[x.projectName,x.authority,x.summary,x.province,x.city,...(x.topicTags||[])].join(' ').toLowerCase();
-    return(!q||hay.includes(q))&&(!stage||x.stage===stage)&&(!level||x.level===level)&&(!province||x.province===province)&&(!topic||(x.topicTags||[]).includes(topic))
+    const hay=[
+      x.projectName,
+      x.authority,
+      x.summary,
+      x.province,
+      x.city,
+      ...(x.topicTags||[])
+    ].join(' ').toLowerCase();
+
+    return(!q||hay.includes(q))
+      &&(!stage||x.stage===stage)
+      &&(!level||x.level===level)
+      &&(!province||x.province===province)
+      &&(!topic||(x.topicTags||[]).includes(topic))
   });
+
   document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
+
   const host=document.querySelector('#opportunity-list');
-  if(!filtered.length){host.innerHTML='<div class="empty">当前筛选条件下没有结果。</div>';return}
-  host.innerHTML=filtered.map(x=>`<article class="card level-${esc(x.level||'unknown')}"><div class="card-top"><div style="min-width:0"><div class="badges"><span class="badge ${esc(x.stage)}">${esc(stageMap[x.stage]||x.stage||'未分类')}</span><span class="badge level-badge ${esc(x.level||'unknown')}">${esc(levelMap[x.level]||x.level||'未分类')}</span>${x.featured?'<span class="badge featured">重点关注</span>':''}</div><h3 class="card-title"><a href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectName)}</a></h3></div><div class="attention">${esc(x.rawAttention||deadlineText(x))}</div></div><p class="summary">${esc(x.summary||'暂无摘要')}</p><div class="meta-row"><span>发布机构：${esc(x.authority||'未注明')}</span><span>发布时间：${esc(fmtDate(x.publishedAt))}</span><span>地区：${esc([x.province,x.city].filter(Boolean).join(' · ')||'全国')}</span><span>${esc(deadlineText(x))}</span></div><div class="tags">${(x.topicTags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></article>`).join('')
+
+  if(!filtered.length){
+    host.innerHTML='<div class="empty">当前筛选条件下没有结果。</div>';
+    return
+  }
+
+  host.innerHTML=filtered.map(x=>{
+    const levelName=levelMap[x.level]||x.level||'未分类';
+    const region=[x.province,x.city].filter(Boolean).join(' · ')||'全国';
+
+    return `
+      <article class="portal-card level-${esc(x.level||'unknown')}">
+
+        <div class="portal-level">
+          ${levelIcon(x.level)}
+          <span class="portal-level-name">${esc(levelName)}</span>
+        </div>
+
+        <div class="portal-body">
+          <div class="portal-flags">
+            <span class="badge ${esc(x.stage)}">
+              ${esc(stageMap[x.stage]||x.stage||'未分类')}
+            </span>
+
+            <span class="badge level-badge ${esc(x.level||'unknown')}">
+              ${esc(levelName)}
+            </span>
+
+            ${x.featured?'<span class="badge featured">重点关注</span>':''}
+          </div>
+
+          <h3 class="portal-title">
+            <a href="${esc(x.sourceUrl)}"
+               target="_blank"
+               rel="noopener noreferrer">
+              ${esc(x.projectName)}
+            </a>
+          </h3>
+
+          <p class="portal-summary">
+            ${esc(x.summary||'暂无摘要')}
+          </p>
+
+          <div class="portal-tags">
+            ${(x.topicTags||[])
+              .map(t=>`<span class="tag">${esc(t)}</span>`)
+              .join('')}
+          </div>
+        </div>
+
+        <div class="portal-side">
+          <div class="portal-meta-grid">
+
+            <div class="portal-meta-item">
+              <span class="portal-meta-label">发布单位</span>
+              <span class="portal-meta-value">
+                ${esc(x.authority||'未注明')}
+              </span>
+            </div>
+
+            <div class="portal-meta-item">
+              <span class="portal-meta-label">发布日期</span>
+              <span class="portal-meta-value">
+                ${esc(fmtDate(x.publishedAt))}
+              </span>
+            </div>
+
+            <div class="portal-meta-item">
+              <span class="portal-meta-label">申报截止</span>
+              <span class="portal-meta-value">
+                ${esc(x.deadlineAt?fmtDate(x.deadlineAt,true):'未注明')}
+              </span>
+            </div>
+
+            <div class="portal-meta-item">
+              <span class="portal-meta-label">地区</span>
+              <span class="portal-meta-value">
+                ${esc(region)}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="portal-card-footer">
+            <a class="portal-detail"
+               href="${esc(x.sourceUrl)}"
+               target="_blank"
+               rel="noopener noreferrer">
+              查看详情 →
+            </a>
+          </div>
+        </div>
+
+      </article>
+    `
+  }).join('')
 }
 function renderTeams(){
   const body=document.querySelector('#team-body');if(!state.teams.length){body.innerHTML='<tr><td colspan="7">暂无已核验团队数据。</td></tr>';return}
