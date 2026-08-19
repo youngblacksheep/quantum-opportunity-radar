@@ -101,3 +101,31 @@
   `;
   methodology.parentNode.insertBefore(section, methodology);
 })();
+(() => {
+  function removeOldCoverage(){
+    document.querySelector('#coverage')?.remove();
+    document.querySelector('.nav a[href="#coverage"]')?.remove();
+  }
+
+  function trimSummaries(root=document){
+    root.querySelectorAll?.('.summary').forEach(el=>{
+      const text=(el.textContent||'').trim();
+      if(text.length>220){
+        el.textContent=text.slice(0,220)+'…';
+      }
+    });
+  }
+
+  removeOldCoverage();
+  trimSummaries();
+
+  const host=document.querySelector('#opportunity-list');
+  if(host){
+    new MutationObserver(()=>{
+      trimSummaries(host);
+    }).observe(host,{
+      childList:true,
+      subtree:true
+    });
+  }
+})();
