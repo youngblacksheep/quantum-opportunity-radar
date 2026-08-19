@@ -2,8 +2,15 @@ name: Update Q·RADAR Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'sources.js'
+      - '.github/workflows/update-pages.yml'
   schedule:
-    - cron: "0 1 * * *"  # 北京时间每天 09:00
+    - cron: "30 10 * * *"  # 北京时间每天 18:30，在当日巡检结束后生成静态快照
 
 permissions:
   contents: read
@@ -36,6 +43,17 @@ jobs:
             --exclude='.github' \
             --exclude='_site' \
             ./ _site/
+
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("_site/index.html")
+          html = path.read_text(encoding="utf-8")
+          script = '  <script src="sources.js"></script>\n'
+          if 'src="sources.js"' not in html:
+              html = html.replace('</body>', script + '</body>')
+          path.write_text(html, encoding="utf-8")
+          PY
 
           fetch_json() {
             url="$1"
