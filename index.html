@@ -970,6 +970,480 @@ body{
     margin-top:8px;
   }
 }
+/* ===== Q·RADAR 手机端最终适配 ===== */
+
+@media(max-width:768px){
+
+  html,
+  body{
+    overflow-x:hidden;
+  }
+
+  body{
+    font-size:14px;
+  }
+
+  /* ---------- 顶部导航 ---------- */
+
+  .topbar{
+    position:sticky;
+    top:0;
+  }
+
+  .topbar-inner{
+    display:block;
+    min-height:auto;
+    padding:10px 16px 0;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    width:max-content;
+    margin-bottom:7px;
+  }
+
+  .brand-mark{
+    font-size:20px;
+  }
+
+  .brand-cn{
+    font-size:12px;
+  }
+
+  .nav{
+    width:100%;
+    display:flex;
+    gap:22px;
+    padding:0 0 8px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .nav::-webkit-scrollbar{
+    display:none;
+  }
+
+  .nav a{
+    flex:0 0 auto;
+    padding:6px 0 9px;
+    font-size:12px;
+  }
+
+  .nav a:first-child:after{
+    bottom:2px;
+  }
+
+
+  /* ---------- 页面主体 ---------- */
+
+  .shell{
+    width:100%;
+    max-width:none;
+    padding:0 14px 48px;
+  }
+
+  .section{
+    margin-top:34px;
+  }
+
+  .section-head{
+    display:block;
+    margin-bottom:14px;
+  }
+
+  .section-kicker{
+    font-size:10px;
+  }
+
+  h2{
+    font-size:23px;
+  }
+
+  .section-note{
+    margin-top:5px;
+    font-size:11px;
+  }
+
+
+  /* ---------- Hero ---------- */
+
+  .hero{
+    width:100vw;
+    min-height:auto;
+    margin-left:calc(50% - 50vw);
+    border-radius:0;
+  }
+
+  .hero-inner{
+    min-height:0;
+    padding:32px 18px 24px;
+  }
+
+  .hero-content{
+    max-width:100%;
+  }
+
+  .hero h1{
+    font-size:42px;
+    line-height:1.12;
+    white-space:nowrap;
+  }
+
+  .hero-subtitle{
+    width:76%;
+    margin-top:10px;
+    font-size:14px;
+    line-height:1.65;
+  }
+
+  .hero-art{
+    right:-155px;
+    top:-4px;
+    width:390px;
+    height:260px;
+    opacity:.32;
+  }
+
+
+  /* ---------- Hero 统计 ---------- */
+
+  .hero-stats{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0;
+    margin-top:24px;
+  }
+
+  .hero-stat{
+    min-width:0;
+    padding:9px 12px 9px 0;
+    border-right:0;
+    border-bottom:1px solid rgba(255,255,255,.13);
+  }
+
+  .hero-stat:nth-child(even){
+    padding-left:15px;
+    border-left:1px solid rgba(255,255,255,.17);
+  }
+
+  .hero-stat:last-child{
+    grid-column:1/-1;
+    padding-left:0;
+    border-left:0;
+    border-bottom:0;
+  }
+
+  .hero-stat-label{
+    font-size:10px;
+  }
+
+  .hero-stat-value{
+    font-size:21px;
+  }
+
+  .hero .hero-meta{
+    margin-top:16px;
+    gap:6px 14px;
+    font-size:10px;
+  }
+
+  #data-mode{
+    display:none;
+  }
+
+
+  /* ---------- 快捷层级 ---------- */
+
+  .quick-levels{
+    width:100%;
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+
+  .quick-levels::-webkit-scrollbar{
+    display:none;
+  }
+
+  .quick-level{
+    flex:0 0 auto;
+    padding:7px 15px;
+    font-size:12px;
+  }
+
+
+  /* ---------- 筛选栏 ---------- */
+
+  .filters{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:10px;
+    border-radius:11px;
+  }
+
+  .filters .search{
+    grid-column:1/-1;
+  }
+
+  .control{
+    min-height:40px;
+    padding:7px 9px;
+    font-size:12px;
+  }
+
+  .result-line{
+    font-size:10px;
+    margin:9px 2px 10px;
+  }
+
+  .result-line span:last-child{
+    display:none;
+  }
+
+
+  /* ---------- 申报机会卡片 ---------- */
+
+  .portal-card{
+    display:grid;
+    grid-template-columns:72px minmax(0,1fr);
+    gap:14px;
+    min-height:0;
+    padding:15px;
+    border-radius:12px;
+  }
+
+  .portal-level{
+    min-height:88px;
+    align-self:start;
+    padding:10px 4px;
+    border-radius:10px;
+  }
+
+  .portal-level svg{
+    width:28px;
+    height:28px;
+  }
+
+  .portal-level-name{
+    font-size:11px;
+  }
+
+  .portal-body{
+    min-width:0;
+  }
+
+  .portal-flags{
+    gap:5px;
+    margin-bottom:6px;
+  }
+
+  .portal-card .badge{
+    min-height:21px;
+    padding:1px 6px;
+    font-size:9px;
+  }
+
+  .portal-title{
+    font-size:15px;
+    line-height:1.48;
+  }
+
+  .portal-summary{
+    display:-webkit-box;
+    overflow:hidden;
+    margin-top:7px;
+    font-size:11px;
+    line-height:1.65;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+  }
+
+  .portal-tags{
+    margin-top:9px;
+    gap:4px;
+  }
+
+  .portal-tags .tag{
+    font-size:9px;
+  }
+
+  .portal-side{
+    grid-column:1/-1;
+    display:block;
+    padding-top:12px;
+    border-top:1px solid rgba(80,95,115,.10);
+  }
+
+  .portal-meta-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:11px 14px;
+  }
+
+  .portal-meta-label{
+    margin-bottom:2px;
+    font-size:9px;
+  }
+
+  .portal-meta-value{
+    font-size:10.5px;
+  }
+
+  .portal-card-footer{
+    margin-top:12px;
+  }
+
+  .portal-detail{
+    font-size:11px;
+  }
+
+
+  /* ---------- 获批团队 ---------- */
+
+  .team-grid{
+    grid-template-columns:1fr;
+    gap:11px;
+  }
+
+  .team-card{
+    min-height:0;
+    padding:17px 18px;
+  }
+
+  .team-top{
+    gap:10px;
+  }
+
+  .team-icon{
+    width:34px;
+    height:34px;
+  }
+
+  .team-program-name{
+    font-size:10px;
+  }
+
+  .team-date{
+    font-size:9px;
+  }
+
+  .team-institution{
+    font-size:16px;
+  }
+
+  .team-project{
+    font-size:12px;
+  }
+
+  .team-info{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .team-direction{
+    max-width:75%;
+    line-height:1.45;
+  }
+
+
+  /* ---------- 下面两个区域 ---------- */
+
+  .coverage-grid,
+  .method-grid{
+    grid-template-columns:1fr;
+  }
+
+  .coverage-card,
+  .method-card{
+    padding:18px;
+  }
+
+  footer{
+    margin-top:38px;
+  }
+}
+
+
+/* 更窄的手机，例如 iPhone mini */
+@media(max-width:480px){
+
+  .shell{
+    padding-left:11px;
+    padding-right:11px;
+  }
+
+  .hero-inner{
+    padding:28px 16px 22px;
+  }
+
+  .hero h1{
+    font-size:38px;
+  }
+
+  .hero-subtitle{
+    width:82%;
+    font-size:13px;
+  }
+
+  .hero-art{
+    right:-190px;
+    top:10px;
+    width:370px;
+    opacity:.25;
+  }
+
+  .filters{
+    grid-template-columns:1fr;
+  }
+
+  .filters .search{
+    grid-column:auto;
+  }
+
+  .portal-card{
+    grid-template-columns:1fr;
+    padding:14px;
+  }
+
+  .portal-level{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    min-height:0;
+    gap:8px;
+    padding:8px 11px;
+  }
+
+  .portal-level svg{
+    width:21px;
+    height:21px;
+  }
+
+  .portal-flags .level-badge{
+    display:none;
+  }
+
+  .portal-meta-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .team-top{
+    display:block;
+  }
+
+  .team-date{
+    margin-top:6px;
+  }
+
+  .team-info{
+    grid-template-columns:1fr;
+  }
+}
   </style>
 </head>
 <body>
