@@ -792,6 +792,184 @@ body{
     grid-template-columns:1fr 1fr;
   }
 }
+/* ===== 获批团队卡片 V4 ===== */
+
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.team-card{
+  position:relative;
+  overflow:hidden;
+  min-height:220px;
+  padding:22px 24px;
+  background:#fff;
+  border:1px solid #dfe4eb;
+  border-radius:14px;
+  transition:.16s ease;
+}
+
+.team-card:hover{
+  transform:translateY(-2px);
+  border-color:#bdcbe0;
+  box-shadow:0 10px 28px rgba(27,48,80,.065);
+}
+
+.team-card:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:linear-gradient(#135bb8,#50a4e8);
+}
+
+.team-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:15px;
+}
+
+.team-program{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.team-icon{
+  flex:0 0 auto;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#1761ba;
+  background:#edf5ff;
+}
+
+.team-icon svg{
+  width:22px;
+  height:22px;
+  stroke:currentColor;
+}
+
+.team-program-name{
+  color:#626b77;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.team-date{
+  flex:0 0 auto;
+  color:#89919c;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.team-institution{
+  margin:0;
+  color:#111821;
+  font-size:18px;
+  line-height:1.42;
+  font-weight:780;
+}
+
+.team-project{
+  margin:9px 0 0;
+  color:#303844;
+  font-size:14px;
+  line-height:1.65;
+  font-weight:650;
+}
+
+.team-info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 18px;
+  margin-top:17px;
+  padding-top:15px;
+  border-top:1px solid #edf0f4;
+}
+
+.team-info-item{
+  min-width:0;
+}
+
+.team-info-label{
+  display:block;
+  color:#9097a1;
+  font-size:10px;
+  margin-bottom:3px;
+}
+
+.team-info-value{
+  display:block;
+  color:#4b535e;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.team-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  margin-top:16px;
+}
+
+.team-direction{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 9px;
+  border-radius:6px;
+  background:#f2f6fb;
+  color:#536273;
+  font-size:10px;
+}
+
+.team-source{
+  flex:0 0 auto;
+  color:#0b57d0;
+  font-size:12px;
+  font-weight:700;
+}
+
+.team-source:hover{
+  text-decoration:none;
+  color:#073e97;
+}
+
+@media(max-width:900px){
+  .team-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:580px){
+  .team-card{
+    padding:18px;
+  }
+
+  .team-info{
+    grid-template-columns:1fr;
+  }
+
+  .team-top{
+    display:block;
+  }
+
+  .team-date{
+    display:block;
+    margin-top:8px;
+  }
+}
   </style>
 </head>
 <body>
@@ -971,11 +1149,24 @@ body{
     <div id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
   </section>
 
-  <section id="teams" class="section">
-    <div class="section-head"><div><p class="section-kicker">Approved Teams</p><h2>已获批团队监测</h2></div><div class="section-note">用于观察已获批方向、承担单位与区域分布</div></div>
-    <div class="panel table-wrap"><table><thead><tr><th>项目或专项</th><th>承担单位</th><th>负责人</th><th>获批课题</th><th>研究方向</th><th>地区</th><th>公开时间</th></tr></thead>
-      <tbody id="team-body"><tr><td colspan="7">正在读取获批团队快照…</td></tr></tbody></table></div>
-  </section>
+<section id="teams" class="section">
+
+  <div class="section-head">
+    <div>
+      <p class="section-kicker">Approved Teams</p>
+      <h2>已获批团队监测</h2>
+    </div>
+
+    <div class="section-note">
+      观察已获批方向、承担单位与区域分布
+    </div>
+  </div>
+
+  <div id="team-grid" class="team-grid">
+    <div class="loading">正在读取获批团队快照…</div>
+  </div>
+
+</section>
 
   <section id="coverage" class="section">
     <div class="section-head"><div><p class="section-kicker">Source Coverage</p><h2>来源覆盖</h2></div><div class="section-note" id="coverage-time"></div></div>
@@ -1168,8 +1359,99 @@ function renderOpportunities(){
   }).join('')
 }
 function renderTeams(){
-  const body=document.querySelector('#team-body');if(!state.teams.length){body.innerHTML='<tr><td colspan="7">暂无已核验团队数据。</td></tr>';return}
-  body.innerHTML=[...state.teams].sort((a,b)=>String(b.newsPublishedAt||'').localeCompare(String(a.newsPublishedAt||''))).map(x=>`<tr><td>${esc(x.programName||'')}</td><td>${esc(x.institution||'')}</td><td>${esc(x.teamLeader||'未公开')}</td><td><a class="team-title" href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectTitle||'')}</a></td><td>${esc(x.researchDirection||'')}</td><td>${esc([x.province,x.city].filter(Boolean).join(' · ')||'')}</td><td>${esc(fmtDate(x.newsPublishedAt))}</td></tr>`).join('')
+  const host=document.querySelector('#team-grid');
+
+  if(!state.teams.length){
+    host.innerHTML='<div class="empty">暂无已核验团队数据。</div>';
+    return
+  }
+
+  host.innerHTML=[...state.teams]
+    .sort((a,b)=>
+      String(b.newsPublishedAt||'')
+        .localeCompare(String(a.newsPublishedAt||''))
+    )
+    .map(x=>{
+
+      const region=[x.province,x.city]
+        .filter(Boolean)
+        .join(' · ')||'未注明';
+
+      return `
+        <article class="team-card">
+
+          <div class="team-top">
+
+            <div class="team-program">
+
+              <div class="team-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path d="M8 40h32"/>
+                  <path d="M12 40V18l12-8 12 8v22"/>
+                  <path d="M18 22h4v5h-4z"/>
+                  <path d="M27 22h4v5h-4z"/>
+                  <path d="M18 31h4v5h-4z"/>
+                  <path d="M27 31h4v5h-4z"/>
+                </svg>
+              </div>
+
+              <div class="team-program-name">
+                ${esc(x.programName||'未注明项目')}
+              </div>
+
+            </div>
+
+            <div class="team-date">
+              ${esc(fmtDate(x.newsPublishedAt))}
+            </div>
+
+          </div>
+
+          <h3 class="team-institution">
+            ${esc(x.institution||'未注明承担单位')}
+          </h3>
+
+          <p class="team-project">
+            ${esc(x.projectTitle||'未公开课题名称')}
+          </p>
+
+          <div class="team-info">
+
+            <div class="team-info-item">
+              <span class="team-info-label">负责人</span>
+              <span class="team-info-value">
+                ${esc(x.teamLeader||'未公开')}
+              </span>
+            </div>
+
+            <div class="team-info-item">
+              <span class="team-info-label">地区</span>
+              <span class="team-info-value">
+                ${esc(region)}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="team-bottom">
+
+            <span class="team-direction">
+              ${esc(x.researchDirection||'研究方向未注明')}
+            </span>
+
+            <a class="team-source"
+               href="${esc(x.sourceUrl)}"
+               target="_blank"
+               rel="noopener noreferrer">
+              查看来源 →
+            </a>
+
+          </div>
+
+        </article>
+      `
+    })
+    .join('')
 }
 function renderCoverage(){
   const c=state.coverage||{};
