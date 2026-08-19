@@ -58,6 +58,223 @@
     footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px}
     @media(max-width:900px){.topbar-inner{align-items:flex-start;flex-direction:column;gap:6px;padding-top:12px;padding-bottom:10px}.nav{width:100%;padding-bottom:2px}.shell{padding-top:28px}.hero{padding:32px 26px}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.filters .search{grid-column:1/-1}.coverage-grid,.method-grid{grid-template-columns:1fr}}
     @media(max-width:580px){.shell{padding-left:14px;padding-right:14px}.topbar-inner{padding-left:14px;padding-right:14px}.hero{padding:27px 20px;border-radius:16px}h1{font-size:36px}.stats{grid-template-columns:1fr 1fr}.stat{padding:14px}.filters{grid-template-columns:1fr}.filters .search{grid-column:auto}.card{padding:18px}.card-top{display:block}.attention{text-align:left;margin-top:10px;max-width:none}}
+  /* ===== Q·RADAR 视觉升级 ===== */
+
+body{
+  background:#f5f7fb;
+}
+
+/* 顶部主视觉 */
+.hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-height:350px;
+  border:0;
+  border-radius:24px;
+  padding:52px 54px 46px;
+  color:#fff;
+  background:linear-gradient(118deg,#06306d 0%,#0750a9 54%,#0865bd 100%);
+  box-shadow:0 18px 45px rgba(7,56,126,.18);
+}
+
+.hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  background:
+    radial-gradient(circle at 85% 43%,rgba(39,198,255,.16),transparent 23%),
+    radial-gradient(circle at 70% 12%,rgba(130,190,255,.16),transparent 30%),
+    linear-gradient(90deg,rgba(2,30,76,.13),transparent 50%);
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  left:-80px;
+  bottom:-90px;
+  width:520px;
+  height:300px;
+  z-index:-2;
+  background:radial-gradient(circle,rgba(0,0,0,.12),transparent 68%);
+}
+
+.hero-content{
+  position:relative;
+  z-index:3;
+  max-width:690px;
+}
+
+.hero .eyebrow{
+  margin:0 0 14px;
+  font-size:12px;
+  letter-spacing:.14em;
+  color:#b9d8ff;
+  font-weight:750;
+}
+
+.hero h1{
+  margin:0;
+  font-size:clamp(44px,5.5vw,72px);
+  line-height:1.08;
+  letter-spacing:-.045em;
+  font-weight:850;
+  color:#fff;
+  text-shadow:0 2px 12px rgba(0,28,75,.12);
+}
+
+.hero-subtitle{
+  margin:18px 0 0;
+  font-size:20px;
+  line-height:1.55;
+  font-weight:650;
+  color:#f2f7ff;
+}
+
+.hero .hero-copy{
+  max-width:650px;
+  margin:12px 0 0;
+  color:#cfe1f8;
+  font-size:14px;
+}
+
+.hero .hero-meta{
+  margin-top:28px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px 18px;
+  color:#d9e9fb;
+  font-size:12px;
+}
+
+.hero .hero-meta span{
+  display:inline-flex;
+  align-items:center;
+}
+
+.hero .status-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#56e5b2;
+  box-shadow:0 0 0 4px rgba(86,229,178,.12);
+  margin-right:8px;
+}
+
+.hero-art{
+  position:absolute;
+  z-index:-1;
+  right:-10px;
+  top:-22px;
+  width:min(58%,690px);
+  height:410px;
+  opacity:.98;
+  pointer-events:none;
+}
+
+.hero-art svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* 国家、省、市三级卡片配色 */
+.card.level-national{
+  background:#fff9f0;
+  border:1px solid #f2d7ae;
+}
+
+.card.level-provincial{
+  background:#f2fbf8;
+  border:1px solid #cce9df;
+}
+
+.card.level-municipal{
+  background:#f4f5ff;
+  border:1px solid #d7daf8;
+}
+
+.card.level-unknown{
+  background:#fff;
+  border:1px solid var(--line);
+}
+
+.card.level-national:hover{
+  border-color:#e9c385;
+}
+
+.card.level-provincial:hover{
+  border-color:#afdccc;
+}
+
+.card.level-municipal:hover{
+  border-color:#bec3f2;
+}
+
+.badge.level-badge.national{
+  color:#a25a00;
+  background:#ffedd0;
+}
+
+.badge.level-badge.provincial{
+  color:#08785c;
+  background:#dff5ed;
+}
+
+.badge.level-badge.municipal{
+  color:#514cc8;
+  background:#e7e7ff;
+}
+
+.card .tag{
+  background:rgba(255,255,255,.62);
+}
+
+@media(max-width:900px){
+  .hero{
+    padding:38px 28px;
+    min-height:330px;
+  }
+
+  .hero-content{
+    max-width:76%;
+  }
+
+  .hero-art{
+    right:-150px;
+    width:76%;
+    opacity:.72;
+  }
+}
+
+@media(max-width:580px){
+  .hero{
+    padding:30px 22px;
+    border-radius:18px;
+    min-height:360px;
+  }
+
+  .hero-content{
+    max-width:100%;
+  }
+
+  .hero-art{
+    right:-210px;
+    top:48px;
+    width:110%;
+    opacity:.35;
+  }
+
+  .hero h1{
+    font-size:43px;
+  }
+
+  .hero-subtitle{
+    font-size:17px;
+  }
+}
   </style>
 </head>
 <body>
@@ -67,12 +284,126 @@
 </div></header>
 
 <main id="top" class="shell">
-  <section class="hero">
+<section class="hero">
+  <div class="hero-content">
     <p class="eyebrow">QUANTUM OPPORTUNITY INTELLIGENCE</p>
-    <h1>全国量子信息与安全课题机会追踪</h1>
-    <p class="hero-copy">聚合官方公开来源，持续整理课题指南、征求意见与获批团队动态，为科研选题、项目申报和产业合作提供可追溯的全国视角。数据由 Cloudflare 后台抓取，页面通过 GitHub Pages 发布静态快照。</p>
-    <div class="hero-meta"><span><span class="status-dot"></span>每日自动更新</span><span id="last-sync">正在读取最新快照</span><span id="data-mode"></span></div>
-  </section>
+
+    <h1>量子课题雷达</h1>
+
+    <p class="hero-subtitle">
+      追踪国家、省、市量子信息与安全领域科研资助机会
+    </p>
+
+    <p class="hero-copy">
+      聚合官方公开来源，持续整理课题指南、征求意见、项目建议及获批团队动态，
+      为科研选题、项目申报和产业合作提供可追溯的全国视角。
+    </p>
+
+    <div class="hero-meta">
+      <span><span class="status-dot"></span>每日自动更新</span>
+      <span id="last-sync">正在读取最新快照</span>
+      <span id="data-mode"></span>
+    </div>
+  </div>
+
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 720 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="g" cx="0" cy="0" r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(478 221) rotate(90) scale(112)">
+          <stop stop-color="#EAF7FF" stop-opacity=".95"/>
+          <stop offset=".22" stop-color="#68C9FF" stop-opacity=".38"/>
+          <stop offset="1" stop-color="#1B6FC5" stop-opacity="0"/>
+        </radialGradient>
+
+        <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="7" result="b"/>
+          <feMerge>
+            <feMergeNode in="b"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g opacity=".25" stroke="#A7D5FF" stroke-width="1">
+        <path d="M15 72L154 42L236 93L330 48L418 92L521 52L690 95"/>
+        <path d="M64 316L158 262L248 318L354 270L452 320L560 276L708 333"/>
+        <path d="M154 42L158 262M236 93L248 318M330 48L354 270M418 92L452 320M521 52L560 276"/>
+      </g>
+
+      <g fill="#79C8FF" opacity=".72">
+        <circle cx="154" cy="42" r="5"/>
+        <circle cx="236" cy="93" r="4"/>
+        <circle cx="330" cy="48" r="5"/>
+        <circle cx="418" cy="92" r="4"/>
+        <circle cx="521" cy="52" r="5"/>
+        <circle cx="158" cy="262" r="5"/>
+        <circle cx="248" cy="318" r="4"/>
+        <circle cx="354" cy="270" r="5"/>
+        <circle cx="452" cy="320" r="4"/>
+        <circle cx="560" cy="276" r="5"/>
+      </g>
+
+      <circle cx="478" cy="221" r="134"
+        stroke="#B9DFFF" stroke-opacity=".28"/>
+
+      <circle cx="478" cy="221" r="166"
+        stroke="#B9DFFF" stroke-opacity=".34"/>
+
+      <circle cx="478" cy="221" r="198"
+        stroke="#B9DFFF"
+        stroke-opacity=".18"
+        stroke-dasharray="6 7"/>
+
+      <ellipse cx="478" cy="221"
+        rx="244" ry="96"
+        transform="rotate(-17 478 221)"
+        stroke="#B9DFFF"
+        stroke-opacity=".33"/>
+
+      <circle cx="478" cy="221" r="112" fill="url(#g)"/>
+
+      <g stroke="#D8EEFF" stroke-opacity=".72" stroke-width="1.2">
+        <circle cx="478" cy="221" r="84"/>
+        <ellipse cx="478" cy="221" rx="84" ry="38"/>
+        <ellipse cx="478" cy="221" rx="84" ry="60"
+          transform="rotate(52 478 221)"/>
+        <ellipse cx="478" cy="221" rx="84" ry="60"
+          transform="rotate(-52 478 221)"/>
+        <path d="M394 221H562"/>
+        <path d="M478 137V305"/>
+        <path d="M410 171L546 271"/>
+        <path d="M410 271L546 171"/>
+      </g>
+
+      <g fill="#E6F6FF">
+        <circle cx="478" cy="221" r="10" filter="url(#glow)"/>
+        <circle cx="426" cy="169" r="4"/>
+        <circle cx="527" cy="168" r="4"/>
+        <circle cx="426" cy="270" r="4"/>
+        <circle cx="530" cy="270" r="4"/>
+        <circle cx="478" cy="137" r="4"/>
+        <circle cx="478" cy="305" r="4"/>
+        <circle cx="394" cy="221" r="4"/>
+        <circle cx="562" cy="221" r="4"/>
+      </g>
+
+      <g fill="#72D8FF">
+        <circle cx="330" cy="137" r="7"/>
+        <circle cx="631" cy="113" r="7"/>
+        <circle cx="666" cy="274" r="6"/>
+        <circle cx="284" cy="291" r="6"/>
+      </g>
+
+      <g fill="#fff">
+        <circle cx="603" cy="68" r="8"/>
+        <circle cx="645" cy="336" r="11"/>
+        <circle cx="347" cy="342" r="7"/>
+      </g>
+    </svg>
+  </div>
+</section>
 
   <div class="stats">
     <div class="stat"><div class="stat-value" id="stat-total">…</div><div class="stat-label">收录申报机会</div></div>
@@ -152,7 +483,7 @@ function renderOpportunities(){
   document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
   const host=document.querySelector('#opportunity-list');
   if(!filtered.length){host.innerHTML='<div class="empty">当前筛选条件下没有结果。</div>';return}
-  host.innerHTML=filtered.map(x=>`<article class="card"><div class="card-top"><div style="min-width:0"><div class="badges"><span class="badge ${esc(x.stage)}">${esc(stageMap[x.stage]||x.stage||'未分类')}</span><span class="badge">${esc(levelMap[x.level]||x.level||'未分类')}</span>${x.featured?'<span class="badge featured">重点关注</span>':''}</div><h3 class="card-title"><a href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectName)}</a></h3></div><div class="attention">${esc(x.rawAttention||deadlineText(x))}</div></div><p class="summary">${esc(x.summary||'暂无摘要')}</p><div class="meta-row"><span>发布机构：${esc(x.authority||'未注明')}</span><span>发布时间：${esc(fmtDate(x.publishedAt))}</span><span>地区：${esc([x.province,x.city].filter(Boolean).join(' · ')||'全国')}</span><span>${esc(deadlineText(x))}</span></div><div class="tags">${(x.topicTags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></article>`).join('')
+  host.innerHTML=filtered.map(x=>`<article class="card level-${esc(x.level||'unknown')}"><div class="card-top"><div style="min-width:0"><div class="badges"><span class="badge ${esc(x.stage)}">${esc(stageMap[x.stage]||x.stage||'未分类')}</span><span class="badge level-badge ${esc(x.level||'unknown')}">${esc(levelMap[x.level]||x.level||'未分类')}</span>${x.featured?'<span class="badge featured">重点关注</span>':''}</div><h3 class="card-title"><a href="${esc(x.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(x.projectName)}</a></h3></div><div class="attention">${esc(x.rawAttention||deadlineText(x))}</div></div><p class="summary">${esc(x.summary||'暂无摘要')}</p><div class="meta-row"><span>发布机构：${esc(x.authority||'未注明')}</span><span>发布时间：${esc(fmtDate(x.publishedAt))}</span><span>地区：${esc([x.province,x.city].filter(Boolean).join(' · ')||'全国')}</span><span>${esc(deadlineText(x))}</span></div><div class="tags">${(x.topicTags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></article>`).join('')
 }
 function renderTeams(){
   const body=document.querySelector('#team-body');if(!state.teams.length){body.innerHTML='<tr><td colspan="7">暂无已核验团队数据。</td></tr>';return}
