@@ -275,6 +275,275 @@ body{
     font-size:17px;
   }
 }
+/* ===== Q·RADAR 门户式首页 V2 ===== */
+
+.topbar{
+  background:#fff;
+  border-bottom:1px solid #e7eaf0;
+}
+
+.topbar-inner{
+  max-width:1320px;
+  min-height:70px;
+}
+
+.brand-mark{
+  color:#11479d;
+  font-size:26px;
+  font-weight:900;
+}
+
+.brand-cn{
+  color:#202733;
+  font-size:15px;
+  font-weight:700;
+}
+
+.nav{
+  gap:30px;
+}
+
+.nav a{
+  position:relative;
+  padding:23px 0 19px;
+  font-size:14px;
+  font-weight:600;
+  color:#3f4650;
+}
+
+.nav a:hover{
+  color:#0b57d0;
+}
+
+.nav a:first-child{
+  color:#0b57d0;
+}
+
+.nav a:first-child:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:12px;
+  height:2px;
+  border-radius:2px;
+  background:#0b57d0;
+}
+
+/* Hero 拉满浏览器宽度 */
+.hero{
+  width:100vw;
+  margin-left:calc(50% - 50vw);
+  border-radius:0;
+  min-height:310px;
+  padding:0;
+  background:
+    radial-gradient(circle at 78% 45%,rgba(24,159,255,.20),transparent 25%),
+    linear-gradient(115deg,#063477 0%,#064994 47%,#0765bd 100%);
+  box-shadow:none;
+}
+
+.hero-inner{
+  position:relative;
+  max-width:1320px;
+  min-height:310px;
+  margin:0 auto;
+  padding:55px 42px 34px;
+  overflow:hidden;
+}
+
+.hero-content{
+  position:relative;
+  z-index:4;
+  max-width:650px;
+}
+
+.hero .eyebrow{
+  display:none;
+}
+
+.hero h1{
+  font-size:clamp(48px,5vw,68px);
+  font-family:"Songti SC","STSong","Noto Serif SC","Times New Roman",serif;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+.hero-subtitle{
+  margin-top:12px;
+  font-size:18px;
+  font-weight:600;
+}
+
+.hero .hero-copy{
+  display:none;
+}
+
+.hero-art{
+  right:-10px;
+  top:-40px;
+  width:600px;
+  height:390px;
+  opacity:.95;
+}
+
+.hero-stats{
+  position:relative;
+  z-index:5;
+  margin-top:28px;
+  display:flex;
+  align-items:center;
+  gap:0;
+}
+
+.hero-stat{
+  min-width:145px;
+  padding:0 24px;
+  border-right:1px solid rgba(255,255,255,.22);
+}
+
+.hero-stat:first-child{
+  padding-left:0;
+}
+
+.hero-stat:last-child{
+  border-right:0;
+}
+
+.hero-stat-label{
+  display:block;
+  margin-bottom:2px;
+  font-size:11px;
+  color:#bcd8f6;
+}
+
+.hero-stat-value{
+  display:block;
+  font-size:25px;
+  line-height:1.25;
+  font-weight:750;
+  color:#fff;
+}
+
+.hero .hero-meta{
+  margin-top:18px;
+  color:#cfe2f7;
+}
+
+/* 原来的白色统计卡隐藏 */
+.stats{
+  display:none;
+}
+
+/* 主体稍微加宽 */
+.shell{
+  max-width:1320px;
+  padding-top:0;
+}
+
+/* 机会区域靠近 Hero */
+#opportunities{
+  margin-top:28px;
+}
+
+/* 快捷层级按钮 */
+.quick-levels{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.quick-level{
+  border:1px solid #e1e5eb;
+  background:#f7f8fa;
+  color:#4c545f;
+  border-radius:999px;
+  padding:8px 18px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:650;
+}
+
+.quick-level:hover{
+  border-color:#b9c9e7;
+  color:#0b57d0;
+}
+
+.quick-level.active{
+  background:#0b4caf;
+  border-color:#0b4caf;
+  color:#fff;
+}
+
+/* 筛选工具条 */
+.filters{
+  display:grid;
+  grid-template-columns:minmax(280px,1.8fr) repeat(4,minmax(130px,1fr));
+  gap:10px;
+  background:#fff;
+  border:1px solid #e4e7ec;
+  padding:14px;
+  border-radius:12px;
+  box-shadow:0 4px 16px rgba(27,45,73,.03);
+}
+
+@media(max-width:900px){
+  .hero{
+    margin-left:calc(50% - 50vw);
+  }
+
+  .hero-inner{
+    padding:42px 28px 30px;
+  }
+
+  .hero-art{
+    right:-170px;
+  }
+
+  .hero-stats{
+    flex-wrap:wrap;
+    row-gap:16px;
+  }
+
+  .hero-stat{
+    min-width:125px;
+  }
+}
+
+@media(max-width:580px){
+  .hero{
+    min-height:390px;
+  }
+
+  .hero-inner{
+    padding:34px 20px;
+  }
+
+  .hero h1{
+    font-size:46px;
+  }
+
+  .hero-art{
+    right:-260px;
+    opacity:.34;
+  }
+
+  .hero-stat{
+    min-width:50%;
+    padding:0 12px 12px 0;
+    border-right:0;
+  }
+
+  .quick-levels{
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+
+  .quick-level{
+    white-space:nowrap;
+  }
+}
   </style>
 </head>
 <body>
@@ -285,136 +554,158 @@ body{
 
 <main id="top" class="shell">
 <section class="hero">
-  <div class="hero-content">
-    <p class="eyebrow">QUANTUM OPPORTUNITY INTELLIGENCE</p>
+  <div class="hero-inner">
 
-    <h1>量子课题雷达</h1>
+    <div class="hero-content">
+      <h1>量子课题雷达</h1>
 
-    <p class="hero-subtitle">
-      追踪国家、省、市量子信息与安全领域科研资助机会
-    </p>
+      <p class="hero-subtitle">
+        追踪国家、省、市量子信息与安全领域科研资助机会
+      </p>
 
-    <p class="hero-copy">
-      聚合官方公开来源，持续整理课题指南、征求意见、项目建议及获批团队动态，
-      为科研选题、项目申报和产业合作提供可追溯的全国视角。
-    </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-label">申报机会</span>
+          <span class="hero-stat-value" id="hero-total">…</span>
+        </div>
 
-    <div class="hero-meta">
-      <span><span class="status-dot"></span>每日自动更新</span>
-      <span id="last-sync">正在读取最新快照</span>
-      <span id="data-mode"></span>
+        <div class="hero-stat">
+          <span class="hero-stat-label">正在申报</span>
+          <span class="hero-stat-value" id="hero-open">…</span>
+        </div>
+
+        <div class="hero-stat">
+          <span class="hero-stat-label">获批团队</span>
+          <span class="hero-stat-value" id="hero-teams">…</span>
+        </div>
+
+        <div class="hero-stat">
+          <span class="hero-stat-label">监测网站</span>
+          <span class="hero-stat-value" id="hero-sources">…</span>
+        </div>
+
+        <div class="hero-stat">
+          <span class="hero-stat-label">更新频率</span>
+          <span class="hero-stat-value" style="font-size:20px">每日更新</span>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <span><span class="status-dot"></span>自动巡检运行中</span>
+        <span id="last-sync">正在读取最新快照</span>
+        <span id="data-mode"></span>
+      </div>
     </div>
-  </div>
 
-  <div class="hero-art" aria-hidden="true">
-    <svg viewBox="0 0 720 430" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="g" cx="0" cy="0" r="1"
-          gradientUnits="userSpaceOnUse"
-          gradientTransform="translate(478 221) rotate(90) scale(112)">
-          <stop stop-color="#EAF7FF" stop-opacity=".95"/>
-          <stop offset=".22" stop-color="#68C9FF" stop-opacity=".38"/>
-          <stop offset="1" stop-color="#1B6FC5" stop-opacity="0"/>
-        </radialGradient>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 720 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="g" cx="0" cy="0" r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(478 221) rotate(90) scale(112)">
+            <stop stop-color="#EAF7FF" stop-opacity=".95"/>
+            <stop offset=".22" stop-color="#68C9FF" stop-opacity=".38"/>
+            <stop offset="1" stop-color="#1B6FC5" stop-opacity="0"/>
+          </radialGradient>
 
-        <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="7" result="b"/>
-          <feMerge>
-            <feMergeNode in="b"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
+          <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="7" result="b"/>
+            <feMerge>
+              <feMergeNode in="b"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
 
-      <g opacity=".25" stroke="#A7D5FF" stroke-width="1">
-        <path d="M15 72L154 42L236 93L330 48L418 92L521 52L690 95"/>
-        <path d="M64 316L158 262L248 318L354 270L452 320L560 276L708 333"/>
-        <path d="M154 42L158 262M236 93L248 318M330 48L354 270M418 92L452 320M521 52L560 276"/>
-      </g>
+        <g opacity=".25" stroke="#A7D5FF" stroke-width="1">
+          <path d="M15 72L154 42L236 93L330 48L418 92L521 52L690 95"/>
+          <path d="M64 316L158 262L248 318L354 270L452 320L560 276L708 333"/>
+          <path d="M154 42L158 262M236 93L248 318M330 48L354 270M418 92L452 320M521 52L560 276"/>
+        </g>
 
-      <g fill="#79C8FF" opacity=".72">
-        <circle cx="154" cy="42" r="5"/>
-        <circle cx="236" cy="93" r="4"/>
-        <circle cx="330" cy="48" r="5"/>
-        <circle cx="418" cy="92" r="4"/>
-        <circle cx="521" cy="52" r="5"/>
-        <circle cx="158" cy="262" r="5"/>
-        <circle cx="248" cy="318" r="4"/>
-        <circle cx="354" cy="270" r="5"/>
-        <circle cx="452" cy="320" r="4"/>
-        <circle cx="560" cy="276" r="5"/>
-      </g>
+        <g fill="#79C8FF" opacity=".72">
+          <circle cx="154" cy="42" r="5"/>
+          <circle cx="236" cy="93" r="4"/>
+          <circle cx="330" cy="48" r="5"/>
+          <circle cx="418" cy="92" r="4"/>
+          <circle cx="521" cy="52" r="5"/>
+          <circle cx="158" cy="262" r="5"/>
+          <circle cx="248" cy="318" r="4"/>
+          <circle cx="354" cy="270" r="5"/>
+          <circle cx="452" cy="320" r="4"/>
+          <circle cx="560" cy="276" r="5"/>
+        </g>
 
-      <circle cx="478" cy="221" r="134"
-        stroke="#B9DFFF" stroke-opacity=".28"/>
+        <circle cx="478" cy="221" r="134"
+          stroke="#B9DFFF" stroke-opacity=".28"/>
 
-      <circle cx="478" cy="221" r="166"
-        stroke="#B9DFFF" stroke-opacity=".34"/>
+        <circle cx="478" cy="221" r="166"
+          stroke="#B9DFFF" stroke-opacity=".34"/>
 
-      <circle cx="478" cy="221" r="198"
-        stroke="#B9DFFF"
-        stroke-opacity=".18"
-        stroke-dasharray="6 7"/>
+        <circle cx="478" cy="221" r="198"
+          stroke="#B9DFFF"
+          stroke-opacity=".18"
+          stroke-dasharray="6 7"/>
 
-      <ellipse cx="478" cy="221"
-        rx="244" ry="96"
-        transform="rotate(-17 478 221)"
-        stroke="#B9DFFF"
-        stroke-opacity=".33"/>
+        <ellipse cx="478" cy="221"
+          rx="244" ry="96"
+          transform="rotate(-17 478 221)"
+          stroke="#B9DFFF"
+          stroke-opacity=".33"/>
 
-      <circle cx="478" cy="221" r="112" fill="url(#g)"/>
+        <circle cx="478" cy="221" r="112" fill="url(#g)"/>
 
-      <g stroke="#D8EEFF" stroke-opacity=".72" stroke-width="1.2">
-        <circle cx="478" cy="221" r="84"/>
-        <ellipse cx="478" cy="221" rx="84" ry="38"/>
-        <ellipse cx="478" cy="221" rx="84" ry="60"
-          transform="rotate(52 478 221)"/>
-        <ellipse cx="478" cy="221" rx="84" ry="60"
-          transform="rotate(-52 478 221)"/>
-        <path d="M394 221H562"/>
-        <path d="M478 137V305"/>
-        <path d="M410 171L546 271"/>
-        <path d="M410 271L546 171"/>
-      </g>
+        <g stroke="#D8EEFF" stroke-opacity=".72" stroke-width="1.2">
+          <circle cx="478" cy="221" r="84"/>
+          <ellipse cx="478" cy="221" rx="84" ry="38"/>
+          <ellipse cx="478" cy="221" rx="84" ry="60"
+            transform="rotate(52 478 221)"/>
+          <ellipse cx="478" cy="221" rx="84" ry="60"
+            transform="rotate(-52 478 221)"/>
+          <path d="M394 221H562"/>
+          <path d="M478 137V305"/>
+          <path d="M410 171L546 271"/>
+          <path d="M410 271L546 171"/>
+        </g>
 
-      <g fill="#E6F6FF">
-        <circle cx="478" cy="221" r="10" filter="url(#glow)"/>
-        <circle cx="426" cy="169" r="4"/>
-        <circle cx="527" cy="168" r="4"/>
-        <circle cx="426" cy="270" r="4"/>
-        <circle cx="530" cy="270" r="4"/>
-        <circle cx="478" cy="137" r="4"/>
-        <circle cx="478" cy="305" r="4"/>
-        <circle cx="394" cy="221" r="4"/>
-        <circle cx="562" cy="221" r="4"/>
-      </g>
+        <g fill="#E6F6FF">
+          <circle cx="478" cy="221" r="10" filter="url(#glow)"/>
+          <circle cx="426" cy="169" r="4"/>
+          <circle cx="527" cy="168" r="4"/>
+          <circle cx="426" cy="270" r="4"/>
+          <circle cx="530" cy="270" r="4"/>
+          <circle cx="478" cy="137" r="4"/>
+          <circle cx="478" cy="305" r="4"/>
+          <circle cx="394" cy="221" r="4"/>
+          <circle cx="562" cy="221" r="4"/>
+        </g>
 
-      <g fill="#72D8FF">
-        <circle cx="330" cy="137" r="7"/>
-        <circle cx="631" cy="113" r="7"/>
-        <circle cx="666" cy="274" r="6"/>
-        <circle cx="284" cy="291" r="6"/>
-      </g>
+        <g fill="#72D8FF">
+          <circle cx="330" cy="137" r="7"/>
+          <circle cx="631" cy="113" r="7"/>
+          <circle cx="666" cy="274" r="6"/>
+          <circle cx="284" cy="291" r="6"/>
+        </g>
 
-      <g fill="#fff">
-        <circle cx="603" cy="68" r="8"/>
-        <circle cx="645" cy="336" r="11"/>
-        <circle cx="347" cy="342" r="7"/>
-      </g>
-    </svg>
+        <g fill="#fff">
+          <circle cx="603" cy="68" r="8"/>
+          <circle cx="645" cy="336" r="11"/>
+          <circle cx="347" cy="342" r="7"/>
+        </g>
+      </svg>
+    </div>
+
   </div>
 </section>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-value" id="stat-total">…</div><div class="stat-label">收录申报机会</div></div>
-    <div class="stat"><div class="stat-value" id="stat-open">…</div><div class="stat-label">正在申报</div></div>
-    <div class="stat"><div class="stat-value" id="stat-upcoming">…</div><div class="stat-label">待发布申报</div></div>
-    <div class="stat"><div class="stat-value" id="stat-sources">…</div><div class="stat-label">监测来源端点</div></div>
-    <div class="stat"><div class="stat-value" id="stat-teams">…</div><div class="stat-label">已核验获批团队</div></div>
-  </div>
-
   <section id="opportunities" class="section">
     <div class="section-head"><div><p class="section-kicker">Opportunity Radar</p><h2>申报机会</h2></div><div class="section-note">优先展示正在申报与即将发布项目</div></div>
+    <div class="quick-levels">
+  <button class="quick-level active" data-level="">全部机会</button>
+  <button class="quick-level" data-level="national">国家级</button>
+  <button class="quick-level" data-level="provincial">省级</button>
+  <button class="quick-level" data-level="municipal">市级</button>
+</div>
     <div class="filters">
       <input id="q" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
       <select id="stage" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
@@ -507,10 +798,16 @@ function fillFilters(){
   document.querySelector('#topic').insertAdjacentHTML('beforeend',topics.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''))
 }
 function renderStats(){
-  document.querySelector('#stat-total').textContent=state.opportunities.length;
-  document.querySelector('#stat-open').textContent=state.opportunities.filter(x=>x.stage==='open').length;
-  document.querySelector('#stat-upcoming').textContent=state.opportunities.filter(x=>x.stage==='upcoming').length;
-  document.querySelector('#stat-teams').textContent=state.teams.length
+  const total=state.opportunities.length;
+  const open=state.opportunities.filter(x=>x.stage==='open').length;
+  const upcoming=state.opportunities.filter(x=>x.stage==='upcoming').length;
+  const teams=state.teams.length;
+  const sources=state.coverage?.sourceEndpointCount??'…';
+
+  document.querySelector('#hero-total').textContent=total;
+  document.querySelector('#hero-open').textContent=open;
+  document.querySelector('#hero-teams').textContent=teams;
+  document.querySelector('#hero-sources').textContent=sources;
 }
 async function load(){
   try{
@@ -528,6 +825,15 @@ async function load(){
   }
 }
 ['q','stage','level','province','topic'].forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',renderOpportunities));
+document.querySelectorAll('.quick-level').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.quick-level').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelector('#level').value=btn.dataset.level;
+    renderOpportunities();
+  });
+});
 load();
 </script>
 </body>
