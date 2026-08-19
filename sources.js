@@ -103,9 +103,12 @@
 })();
 (() => {
   function removeOldCoverage(){
-    document.querySelector('#coverage')?.remove();
-    document.querySelector('.nav a[href="#coverage"]')?.remove();
+  const coverage=document.querySelector('#coverage');
+  if(coverage){
+    coverage.style.display='none';
   }
+  document.querySelector('.nav a[href="#coverage"]')?.remove();
+}
 
   function trimSummaries(root=document){
     root.querySelectorAll?.('.summary').forEach(el=>{
