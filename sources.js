@@ -31,15 +31,15 @@
     {level:'市级',region:'济南',authority:'济南市科学技术局',url:'https://jnsti.jinan.gov.cn/col/col13061/index.html'},
     {level:'省级',region:'河北',authority:'河北省科学技术厅',url:'https://kjt.hebei.gov.cn/'},
     {level:'省级',region:'山西',authority:'山西省科学技术厅',url:'https://kjt.shanxi.gov.cn/'},
-    {level:'省级',region:'安徽',authority:'安徽省科学技术厅',url:'https://kjt.ah.gov.cn/'}
+    {level:'省级',region:'安徽',authority:'安徽省科学技术厅',url:'https://kjt.ah.gov.cn/'},
+    {level:'省级',region:'河南',authority:'河南省科学技术厅',url:'https://kjt.henan.gov.cn/tzgg/'},
+    {level:'省级',region:'四川',authority:'四川省科学技术厅',url:'https://kjt.sc.gov.cn/kjt/gstz/'}
   ];
 
   const pendingSources = [
     {region:'江西',authority:'江西省科学技术厅',url:'https://kjt.jiangxi.gov.cn/'},
-    {region:'河南',authority:'河南省科学技术厅',url:'https://kjt.henan.gov.cn/'},
     {region:'广西',authority:'广西壮族自治区科学技术厅',url:'https://kjt.gxzf.gov.cn/'},
     {region:'海南',authority:'海南省科学技术厅',url:'https://dost.hainan.gov.cn/'},
-    {region:'四川',authority:'四川省科学技术厅',url:'https://kjt.sc.gov.cn/'},
     {region:'陕西',authority:'陕西省科学技术厅',url:'https://kjt.shaanxi.gov.cn/'},
     {region:'甘肃',authority:'甘肃省科学技术厅',url:'https://kjt.gansu.gov.cn/'},
     {region:'青海',authority:'青海省科学技术厅',url:'https://kjt.qinghai.gov.cn/'}
