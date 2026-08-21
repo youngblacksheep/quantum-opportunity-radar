@@ -1673,6 +1673,15 @@ body{
 const state={opportunities:[],teams:[],coverage:null,metadata:null};
 const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
 const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
+function effectiveStage(x){
+  if(x.stage==='open' && x.deadlineAt){
+    const deadline=new Date(x.deadlineAt);
+    if(!Number.isNaN(deadline.getTime()) && deadline<new Date()){
+      return 'closed';
+    }
+  }
+  return x.stage;
+}
 
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function fmtDate(v,withTime=false){
