@@ -1691,7 +1691,12 @@ function fmtDate(v,withTime=false){
 function deadlineText(x){if(!x.deadlineAt)return x.stage==='upcoming'?'正式申报待发布':'未注明截止时间';return`截止 ${fmtDate(x.deadlineAt,true)}`}
 function sortOpportunities(items){
   const rank={open:0,upcoming:1,closed:2};
-  return[...items].sort((a,b)=>{const r=(rank[a.stage]??9)-(rank[b.stage]??9);if(r)return r;if(!!a.featured!==!!b.featured)return a.featured?-1:1;return String(b.publishedAt??'').localeCompare(String(a.publishedAt??''))})
+  return [...items].sort((a,b)=>{
+    const r=(rank[effectiveStage(a)]??9)-(rank[effectiveStage(b)]??9);
+    if(r)return r;
+    if(!!a.featured!==!!b.featured)return a.featured?-1:1;
+    return String(b.publishedAt??'').localeCompare(String(a.publishedAt??''));
+  });
 }
 function levelIcon(level){
   if(level==='national'){
@@ -1735,7 +1740,7 @@ function renderOpportunities(){
     ].join(' ').toLowerCase();
 
     return(!q||hay.includes(q))
-      &&(!stage||x.stage===stage)
+      &&(!stage||effectiveStage(x)===stage)
       &&(!level||x.level===level)
       &&(!province||x.province===province)
       &&(!topic||(x.topicTags||[]).includes(topic))
@@ -1753,6 +1758,7 @@ function renderOpportunities(){
   host.innerHTML=filtered.map(x=>{
     const levelName=levelMap[x.level]||x.level||'未分类';
     const region=[x.province,x.city].filter(Boolean).join(' · ')||'全国';
+    const currentStage=effectiveStage(x);
 
     return `
       <article class="portal-card level-${esc(x.level||'unknown')}">
@@ -1764,8 +1770,8 @@ function renderOpportunities(){
 
         <div class="portal-body">
           <div class="portal-flags">
-            <span class="badge ${esc(x.stage)}">
-              ${esc(stageMap[x.stage]||x.stage||'未分类')}
+            <span class="badge ${esc(currentStage)}">
+               ${esc(stageMap[currentStage]||currentStage||'未分类')}
             </span>
 
             <span class="badge level-badge ${esc(x.level||'unknown')}">
