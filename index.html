@@ -36,7 +36,14 @@
     .filters{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:grid;grid-template-columns:minmax(210px,1.8fr) repeat(4,minmax(125px,1fr));gap:10px;margin-bottom:14px}
     .control{width:100%;min-height:42px;border:1px solid var(--line2);background:#fff;color:var(--ink);border-radius:9px;padding:8px 11px;outline:none}
     .control:focus{border-color:#8fb4ef;box-shadow:0 0 0 3px #edf4ff}
-    .result-line{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font-size:13px;margin:10px 2px 12px}
+    .result-line{display:flex;align-items:center;justify-content:space-between;gap:14px;color:var(--muted);font-size:13px;margin:10px 2px 12px}
+    .result-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
+    .result-hint{white-space:nowrap}
+    .export-status{color:var(--green);font-size:12px}
+    .export-button{border:1px solid #0b57d0;background:#0b57d0;color:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap;transition:.16s ease}
+    .export-button:hover:not(:disabled){background:#0847ad;border-color:#0847ad}
+    .export-button:focus-visible{outline:3px solid #cfe1ff;outline-offset:2px}
+    .export-button:disabled{cursor:not-allowed;opacity:.5}
     .cards{display:grid;gap:12px}.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;transition:.16s}
     .card:hover{border-color:#c8ced6;transform:translateY(-1px);box-shadow:0 8px 24px rgba(17,19,23,.045)}
     .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:22px}.card-title{margin:0;font-size:19px;line-height:1.48;letter-spacing:-.012em}
@@ -1206,6 +1213,15 @@ body{
     display:none;
   }
 
+  .result-actions{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .result-actions output{
+    display:inline;
+  }
+
 
   /* ---------- 申报机会卡片 ---------- */
 
@@ -1619,7 +1635,14 @@ body{
       <select id="province" class="control"><option value="">全部地区</option></select>
       <select id="topic" class="control"><option value="">全部方向</option></select>
     </div>
-    <div class="result-line"><span id="result-count">正在加载</span><span>点击项目标题查看官方来源</span></div>
+    <div class="result-line">
+      <span id="result-count">正在加载</span>
+      <div class="result-actions">
+        <span class="result-hint">点击项目标题查看官方来源</span>
+        <output id="export-status" class="export-status" aria-live="polite"></output>
+        <button id="export-opportunities" class="export-button" type="button" disabled aria-label="导出当前筛选结果">导出当前筛选结果</button>
+      </div>
+    </div>
     <div id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
   </section>
 
@@ -1669,6 +1692,7 @@ body{
   <footer><span>Q·RADAR 量子课题雷达</span><span id="footer-meta">静态快照由 GitHub Pages 提供</span></footer>
 </main>
 
+<script src="export.js"></script>
 <script>
 const state={opportunities:[],teams:[],coverage:null,metadata:null};
 const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
@@ -1722,14 +1746,14 @@ function levelIcon(level){
   </svg>`
 }
 
-function renderOpportunities(){
+function getFilteredOpportunities(){
   const q=document.querySelector('#q').value.trim().toLowerCase();
   const stage=document.querySelector('#stage').value;
   const level=document.querySelector('#level').value;
   const province=document.querySelector('#province').value;
   const topic=document.querySelector('#topic').value;
 
-  const filtered=sortOpportunities(state.opportunities).filter(x=>{
+  return sortOpportunities(state.opportunities).filter(x=>{
     const hay=[
       x.projectName,
       x.authority,
@@ -1745,8 +1769,16 @@ function renderOpportunities(){
       &&(!province||x.province===province)
       &&(!topic||(x.topicTags||[]).includes(topic))
   });
+}
+
+function renderOpportunities(){
+  const filtered=getFilteredOpportunities();
 
   document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
+  const exportButton=document.querySelector('#export-opportunities');
+  if(exportButton)exportButton.disabled=filtered.length===0;
+  const exportStatus=document.querySelector('#export-status');
+  if(exportStatus)exportStatus.textContent='';
 
   const host=document.querySelector('#opportunity-list');
 
@@ -1971,6 +2003,66 @@ function renderStats(){
   document.querySelector('#hero-teams').textContent=teams;
   document.querySelector('#hero-sources').textContent=sources;
 }
+function exportFilterValues(){
+  return {
+    q:document.querySelector('#q').value.trim(),
+    stage:document.querySelector('#stage').value,
+    level:document.querySelector('#level').value,
+    province:document.querySelector('#province').value,
+    topic:document.querySelector('#topic').value
+  };
+}
+function setExportStatus(message){
+  const status=document.querySelector('#export-status');
+  if(status)status.textContent=message;
+}
+function exportCurrentOpportunities(){
+  const filtered=getFilteredOpportunities();
+  if(!filtered.length){
+    setExportStatus('当前筛选没有可导出的课题');
+    return;
+  }
+
+  const button=document.querySelector('#export-opportunities');
+  if(!globalThis.QRadarExport||typeof globalThis.QRadarExport.buildExportDocument!=='function'){
+    setExportStatus('导出功能暂时不可用，请刷新页面后重试');
+    return;
+  }
+  if(typeof Blob!=='function'||typeof URL!=='function'||typeof URL.createObjectURL!=='function'){
+    setExportStatus('当前浏览器不支持 Excel 下载');
+    return;
+  }
+
+  const originalLabel=button?.textContent||'导出当前筛选结果';
+  if(button){button.disabled=true;button.textContent='正在导出…'}
+  try{
+    const output=globalThis.QRadarExport.buildExportDocument({
+      items:filtered,
+      filters:exportFilterValues(),
+      now:new Date(),
+      effectiveStage,
+      formatDate: v => fmtDate(v,true),
+      stageMap,
+      levelMap
+    });
+    const blob=new Blob([output.content],{type:'application/vnd.ms-excel;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const anchor=document.createElement('a');
+    anchor.href=url;
+    anchor.download=output.filename;
+    anchor.style.display='none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),0);
+    setExportStatus(`已导出 ${output.rowCount} 条课题`);
+  }catch(error){
+    console.error(error);
+    setExportStatus('导出失败，请稍后重试');
+  }finally{
+    if(button){button.disabled=false;button.textContent=originalLabel}
+  }
+}
 async function load(){
   try{
     const [o,c,t,m]=await Promise.all([fetch('data/opportunities.json',{cache:'no-store'}),fetch('data/coverage.json',{cache:'no-store'}),fetch('data/approved-teams.json',{cache:'no-store'}),fetch('data/metadata.json',{cache:'no-store'})]);
@@ -1996,6 +2088,7 @@ document.querySelectorAll('.quick-level').forEach(btn=>{
     renderOpportunities();
   });
 });
+document.querySelector('#export-opportunities').addEventListener('click',exportCurrentOpportunities);
 load();
 </script>
 </body>
