@@ -7,7 +7,9 @@ on:
       - main
     paths:
       - 'index.html'
-      - 'sources.js'
+      - '*.js'
+      - 'package.json'
+      - 'test/**'
       - '.github/workflows/update-pages.yml'
   schedule:
     - cron: "30 10 * * *"  # 北京时间每天 18:30，在当日巡检结束后生成静态快照
@@ -28,6 +30,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run regression tests
+        run: npm test
 
       - name: Build static site with latest Cloudflare snapshots
         shell: bash

@@ -47,7 +47,7 @@
 
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
   const group = level => activeSources.filter(x => x.level === level);
-  const rows = items => items.map(x => `<tr><td>${esc(x.level || '省级')}</td><td>${esc(x.region)}</td><td>${esc(x.authority)}</td><td><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">打开官方入口</a></td><td><span class="source-status source-status-active">已接入</span></td></tr>`).join('');
+  const rows = items => items.map(x => `<tr><td>${esc(x.level || '省级')}</td><td>${esc(x.region)}</td><td>${esc(x.authority)}</td><td><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">打开官方入口</a></td><td><span class="source-status source-status-active">已配置入口</span></td></tr>`).join('');
   const pendingRows = pendingSources.map(x => `<tr><td>省级</td><td>${esc(x.region)}</td><td>${esc(x.authority)}</td><td><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">官网首页</a></td><td><span class="source-status source-status-pending">待接入稳定列表</span></td></tr>`).join('');
 
   const style = document.createElement('style');
@@ -84,9 +84,9 @@
   section.id = 'sources';
   section.className = 'section';
   section.innerHTML = `
-    <div class="section-head"><div><p class="section-kicker">Official Source Coverage</p><h2>官方监测网站</h2></div><div class="section-note">展示当前生产抓取配置及待完善覆盖范围</div></div>
+    <div class="section-head"><div><p class="section-kicker">Official Source Coverage</p><h2>官方监测网站</h2></div><div class="section-note">官方入口参考目录；实时采集状态见来源覆盖</div></div>
     <div class="source-overview">
-      <div class="mini-stat"><strong>${activeSources.length}</strong><span>活跃官方来源</span></div>
+      <div class="mini-stat"><strong>${activeSources.length}</strong><span>已登记官方入口</span></div>
       <div class="mini-stat"><strong>${group('国家级').length}</strong><span>国家级来源</span></div>
       <div class="mini-stat"><strong>${group('省级').length}</strong><span>省级来源</span></div>
       <div class="mini-stat"><strong>${group('市级').length}</strong><span>重点城市来源</span></div>
@@ -97,19 +97,11 @@
       <details class="source-group"><summary>重点城市监测入口 <span>${group('市级').length} 个</span></summary><div class="table-wrap"><table><thead><tr><th>层级</th><th>地区</th><th>主管单位</th><th>监测入口</th><th>状态</th></tr></thead><tbody>${rows(group('市级'))}</tbody></table></div></details>
       <details class="source-group"><summary>待完善省级覆盖 <span>${pendingSources.length} 个</span></summary><div class="table-wrap"><table><thead><tr><th>层级</th><th>地区</th><th>主管单位</th><th>官网入口</th><th>状态</th></tr></thead><tbody>${pendingRows}</tbody></table></div></details>
     </div>
-    <p class="source-footnote">“已接入”表示当前已有明确监测入口并参与自动巡检；“待接入稳定列表”表示已确定主管部门官网，但仍需完成可持续抓取的通知公告或项目申报列表定位。官网访问限制、robots 规则及页面结构变化可能影响单次抓取。</p>
+    <p class="source-footnote">“已配置入口”仅表示本页面登记了官方入口，不代表最近抓取成功。实际巡检及异常请查看“来源覆盖”；“待接入稳定列表”表示已确定主管部门官网，但仍需完成可持续抓取的通知公告或项目申报列表定位。官网访问限制、robots 规则及页面结构变化可能影响单次抓取。</p>
   `;
   methodology.parentNode.insertBefore(section, methodology);
 })();
 (() => {
-  function removeOldCoverage(){
-  const coverage=document.querySelector('#coverage');
-  if(coverage){
-    coverage.style.display='none';
-  }
-  document.querySelector('.nav a[href="#coverage"]')?.remove();
-}
-
   function trimSummaries(root=document){
     root.querySelectorAll?.('.summary').forEach(el=>{
       const text=(el.textContent||'').trim();
@@ -119,7 +111,6 @@
     });
   }
 
-  removeOldCoverage();
   trimSummaries();
 
   const host=document.querySelector('#opportunity-list');

@@ -1460,7 +1460,14 @@ body{
     grid-template-columns:1fr;
   }
 }
-  </style>
+  /* Keep both actions reachable on narrow screens. */
+@media(max-width:600px){
+  .result-line{flex-direction:column;align-items:stretch}
+  .result-actions{width:100%;flex-wrap:wrap;justify-content:flex-start}
+  .result-actions .result-hint{width:100%}
+  .result-actions button{max-width:100%;white-space:normal}
+}
+</style>
 </head>
 <body>
 <header class="topbar"><div class="topbar-inner">
@@ -1508,12 +1515,12 @@ body{
 
         <div class="hero-stat">
           <span class="hero-stat-label">更新频率</span>
-          <span class="hero-stat-value" style="font-size:20px">每日更新</span>
+          <span class="hero-stat-value" style="font-size:20px">计划每日更新</span>
         </div>
       </div>
 
       <div class="hero-meta">
-        <span><span class="status-dot"></span>自动巡检运行中</span>
+        <span><span class="status-dot"></span>静态快照浏览</span>
         <span id="last-sync">正在读取最新快照</span>
         <span id="data-mode"></span>
       </div>
@@ -1634,12 +1641,16 @@ body{
       <select id="level" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
       <select id="province" class="control"><option value="">全部地区</option></select>
       <select id="topic" class="control"><option value="">全部方向</option></select>
+      <select id="sort" class="control" aria-label="排序方式"><option value="default">综合排序</option><option value="deadline">截止时间从近到远</option></select>
     </div>
+    <p id="data-health" role="status" aria-live="polite" style="line-height:1.7;color:var(--muted);margin:12px 0"></p>
+    <button id="retry-load" class="export-button" type="button" hidden>重新读取数据</button>
     <div class="result-line">
       <span id="result-count">正在加载</span>
       <div class="result-actions">
         <span class="result-hint">点击项目标题查看官方来源</span>
         <output id="export-status" class="export-status" aria-live="polite"></output>
+        <button id="share-filters" class="export-button" type="button">分享当前筛选</button>
         <button id="export-opportunities" class="export-button" type="button" disabled aria-label="导出当前筛选结果">导出当前筛选结果</button>
       </div>
     </div>
@@ -1694,13 +1705,17 @@ body{
 
 <script src="export.js"></script>
 <script>
-const state={opportunities:[],teams:[],coverage:null,metadata:null};
+const state={opportunities:[],teams:[],coverage:null,metadata:null,opportunitiesAvailable:false};
 const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
 const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
+function deadlineTimestamp(value){
+  if(!value)return NaN;
+  return Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(value)?`${value}T23:59:59.999+08:00`:value);
+}
 function effectiveStage(x){
   if(x.stage==='open' && x.deadlineAt){
-    const deadline=new Date(x.deadlineAt);
-    if(!Number.isNaN(deadline.getTime()) && deadline<new Date()){
+    const deadline=deadlineTimestamp(x.deadlineAt);
+    if(Number.isFinite(deadline) && deadline<Date.now()){
       return 'closed';
     }
   }
@@ -1709,6 +1724,7 @@ function effectiveStage(x){
 
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function fmtDate(v,withTime=false){
+  if(withTime && /^\d{4}-\d{2}-\d{2}$/.test(v))return `${v}（未注明具体时间）`;
   if(!v)return'未注明';const d=new Date(v);if(Number.isNaN(d.getTime()))return esc(v);
   return new Intl.DateTimeFormat('zh-CN',withTime?{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}:{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(d).replaceAll('/','-')
 }
@@ -1718,6 +1734,11 @@ function sortOpportunities(items){
   return [...items].sort((a,b)=>{
     const r=(rank[effectiveStage(a)]??9)-(rank[effectiveStage(b)]??9);
     if(r)return r;
+    if(document.querySelector('#sort').value==='deadline'){
+      const left=deadlineTimestamp(a.deadlineAt),right=deadlineTimestamp(b.deadlineAt);
+      const delta=(Number.isFinite(left)?left:Infinity)-(Number.isFinite(right)?right:Infinity);
+      if(delta && !Number.isNaN(delta))return delta;
+    }
     if(!!a.featured!==!!b.featured)return a.featured?-1:1;
     return String(b.publishedAt??'').localeCompare(String(a.publishedAt??''));
   });
@@ -1772,6 +1793,7 @@ function getFilteredOpportunities(){
 }
 
 function renderOpportunities(){
+  if(!state.opportunitiesAvailable)return;
   const filtered=getFilteredOpportunities();
 
   document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
@@ -1976,27 +1998,33 @@ function renderTeams(){
 }
 function renderCoverage(){
   const c=state.coverage||{};
-  document.querySelector('#active-sources').textContent=c.activeSourceCount??'…';
-  document.querySelector('#pending-sources').textContent=c.pendingDiscoveryCount??'…';
-  document.querySelector('#national-sources').textContent=c.byLevel?.national??'…';
-  document.querySelector('#regional-sources').textContent=(c.byLevel?.provincial??0)+(c.byLevel?.municipal??0);
-  document.querySelector('#hero-sources').textContent=c.sourceEndpointCount??'…';
+  document.querySelector('#active-sources').textContent=c.activeSourceCount??'未知';
+  document.querySelector('#pending-sources').textContent=c.pendingDiscoveryCount??'未知';
+  document.querySelector('#national-sources').textContent=c.byLevel?.national??'未知';
+  document.querySelector('#regional-sources').textContent=c.byLevel?(c.byLevel.provincial??0)+(c.byLevel.municipal??0):'未知';
+  document.querySelector('#hero-sources').textContent=c.sourceEndpointCount??'未知';
   document.querySelector('#coverage-time').textContent=c.lastCompletedRunAt?`最近一次抓取完成于 ${fmtDate(c.lastCompletedRunAt,true)}`:'';
-  const failures=c.failedSources||[];
+  if(!state.coverage || !Array.isArray(c.failedSources)){
+    document.querySelector('#failure-list').innerHTML='<li>采集状态读取失败或缺少异常记录，暂时无法判断来源健康情况。</li>';
+    return;
+  }
+  const failures=c.failedSources;
   document.querySelector('#failure-list').innerHTML=failures.length?failures.map(x=>`<li><span>${esc(x.sourceId)} · ${esc(fmtDate(x.finishedAt,true))}</span><span class="failure-code">${esc(x.errorSummary||x.status)}</span></li>`).join(''):'<li><span>近期没有记录到抓取异常。</span><span></span></li>'
 }
 function fillFilters(){
   const provinces=[...new Set(state.opportunities.map(x=>x.province).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
   const topics=[...new Set(state.opportunities.flatMap(x=>x.topicTags||[]))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
+  document.querySelector('#province').innerHTML='<option value="">全部地区</option>';
+  document.querySelector('#topic').innerHTML='<option value="">全部方向</option>';
   document.querySelector('#province').insertAdjacentHTML('beforeend',provinces.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''));
   document.querySelector('#topic').insertAdjacentHTML('beforeend',topics.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''))
 }
 function renderStats(){
   const total=state.opportunities.length;
-  const open=state.opportunities.filter(x=>x.stage==='open').length;
-  const upcoming=state.opportunities.filter(x=>x.stage==='upcoming').length;
+  const open=state.opportunities.filter(x=>effectiveStage(x)==='open').length;
+  const upcoming=state.opportunities.filter(x=>effectiveStage(x)==='upcoming').length;
   const teams=state.teams.length;
-  const sources=state.coverage?.sourceEndpointCount??'…';
+  const sources=state.coverage?.sourceEndpointCount??'未知';
 
   document.querySelector('#hero-total').textContent=total;
   document.querySelector('#hero-open').textContent=open;
@@ -2063,32 +2091,107 @@ function exportCurrentOpportunities(){
     if(button){button.disabled=false;button.textContent=originalLabel}
   }
 }
-async function load(){
-  try{
-    const [o,c,t,m]=await Promise.all([fetch('data/opportunities.json',{cache:'no-store'}),fetch('data/coverage.json',{cache:'no-store'}),fetch('data/approved-teams.json',{cache:'no-store'}),fetch('data/metadata.json',{cache:'no-store'})]);
-    if(![o,c,t,m].every(r=>r.ok))throw new Error('快照文件读取失败');
-    const [oj,cj,tj,mj]=await Promise.all([o.json(),c.json(),t.json(),m.json()]);
-    state.opportunities=oj.items||[];state.coverage=cj;state.teams=tj.items||[];state.metadata=mj;
-    fillFilters();renderStats();renderOpportunities();renderTeams();renderCoverage();
-    const syncAt=oj.lastSuccessfulSyncAt||cj.lastSuccessfulSyncAt||mj.generatedAt;
-    document.querySelector('#last-sync').textContent=syncAt?`最近成功同步 ${fmtDate(syncAt,true)}`:'已读取静态快照';
-    document.querySelector('#data-mode').textContent=oj.dataMode?`数据模式：${oj.dataMode}`:'';
-    document.querySelector('#footer-meta').textContent=`页面快照生成于 ${fmtDate(mj.generatedAt,true)} · GitHub Pages`
-  }catch(err){
-    console.error(err);document.querySelector('#opportunity-list').innerHTML='<div class="error">页面已打开，但数据快照暂时读取失败。请稍后刷新。</div>';document.querySelector('#result-count').textContent='数据读取失败'
+const filterIds=['q','stage','level','province','topic','sort'];
+function restoreFilters(){
+  const params=new URLSearchParams(location.search);
+  for(const id of filterIds){
+    const control=document.querySelector(`#${id}`),value=params.get(id);
+    if(value!==null && (id==='q'||Array.from(control.options).some(x=>x.value===value)))control.value=value;
   }
 }
-['q','stage','level','province','topic'].forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',renderOpportunities));
+function updateFilterURL(){
+  const url=new URL(location.href);
+  for(const id of filterIds){
+    const value=document.querySelector(`#${id}`).value;
+    if(value && value!=='default')url.searchParams.set(id,value);else url.searchParams.delete(id);
+  }
+  history.replaceState(null,'',url);
+  document.querySelectorAll('.quick-level').forEach(button=>button.classList.toggle('active',button.dataset.level===document.querySelector('#level').value));
+}
+async function shareFilters(){
+  updateFilterURL();
+  try{
+    await navigator.clipboard.writeText(location.href);
+    setExportStatus('筛选链接已复制');
+  }catch{
+    setExportStatus('筛选已保存在地址栏，请复制浏览器地址分享');
+  }
+}
+async function fetchSnapshot(path,kind){
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),15000);
+  try{
+    const response=await fetch(path,{cache:'no-store',signal:controller.signal});
+    if(!response.ok)throw new Error(`${path} 读取失败`);
+    const data=await response.json();
+    if(!data || typeof data!=='object' || Array.isArray(data))throw new Error(`${path} 格式异常`);
+    if(kind==='items' && (!Array.isArray(data.items)||data.items.some(x=>!x||typeof x!=='object'||Array.isArray(x)|| (x.topicTags!=null&&!Array.isArray(x.topicTags)))))throw new Error(`${path} 列表格式异常`);
+    if(kind==='coverage' && (!Array.isArray(data.failedSources)||data.failedSources.some(x=>!x||typeof x!=='object')))throw new Error(`${path} 覆盖状态格式异常`);
+    return data;
+  }finally{clearTimeout(timeout)}
+}
+let loading=false;
+async function load(){
+  if(loading)return;
+  loading=true;
+  const retry=document.querySelector('#retry-load');
+  retry.disabled=true;retry.hidden=true;
+  document.querySelector('#data-health').textContent='正在读取最新快照…';
+  const feeds=[['opportunities','items'],['coverage','coverage'],['approved-teams','items'],['metadata','object']];
+  const results=await Promise.allSettled(feeds.map(([name,kind])=>fetchSnapshot(`data/${name}.json`,kind)));
+  const [oj,cj,tj,mj]=results.map(result=>result.status==='fulfilled'?result.value:null);
+  state.opportunitiesAvailable=!!oj;state.opportunities=oj?.items||[];state.coverage=cj;state.teams=tj?.items||[];state.metadata=mj;
+  const messages=[];
+  try{
+    renderStats();renderCoverage();
+    if(tj)renderTeams();else{
+      document.querySelector('#team-grid').innerHTML='<div class="error">团队快照读取失败，可重试；不影响课题浏览。</div>';
+      document.querySelector('#hero-teams').textContent='未知';
+    }
+    if(oj){
+      fillFilters();restoreFilters();renderOpportunities();updateFilterURL();
+      const syncAt=oj.lastSuccessfulSyncAt;
+      document.querySelector('#last-sync').textContent=syncAt?`课题最近成功同步 ${fmtDate(syncAt,true)}`:'课题尚无成功同步记录';
+      const syncTime=Date.parse(syncAt);
+      if(!Number.isFinite(syncTime))messages.push('课题暂无有效同步时间，时效性待核实。');
+      else if(Date.now()-syncTime>48*60*60*1000)messages.push('课题已超过 48 小时未成功同步，请核对官方通知。');
+      if(/seed|fallback/i.test(oj.dataMode||''))messages.push('当前为种子或回退数据，不代表最新抓取结果。');
+      document.querySelector('#data-mode').textContent=`数据模式：${oj.dataMode||'未注明'}`;
+    }else{
+      document.querySelector('#opportunity-list').innerHTML='<div class="error">课题快照读取失败，请点击重新读取数据。</div>';
+      document.querySelector('#result-count').textContent='数据读取失败';
+      document.querySelector('#export-opportunities').disabled=true;
+      document.querySelector('#hero-total').textContent='未知';
+      document.querySelector('#hero-open').textContent='未知';
+      document.querySelector('#last-sync').textContent='课题同步时间未知';
+      document.querySelector('#data-mode').textContent='';
+    }
+    const labels=['课题','采集状态','团队','快照元数据'];
+    results.forEach((result,i)=>{if(result.status==='rejected')messages.push(`${labels[i]}读取失败。`)});
+    document.querySelector('#footer-meta').textContent=mj?.generatedAt?`页面快照生成于 ${fmtDate(mj.generatedAt,true)} · GitHub Pages`:'页面快照生成时间未知 · GitHub Pages';
+    document.querySelector('#data-health').textContent=messages.join(' ')||'已读取快照；申报状态按当前时间计算，请以官方通知为准。';
+    retry.hidden=results.every(result=>result.status==='fulfilled');
+  }catch(error){
+    console.error(error);
+    document.querySelector('#data-health').textContent='快照内容无法完整展示，请重试或查看官方来源。';
+    document.querySelector('#result-count').textContent='数据读取失败';
+    document.querySelector('#export-opportunities').disabled=true;
+    retry.hidden=false;
+  }finally{loading=false;retry.disabled=false}
+}
+filterIds.forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',()=>{updateFilterURL();renderOpportunities()}));
 document.querySelectorAll('.quick-level').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.quick-level').forEach(x=>x.classList.remove('active'));
     btn.classList.add('active');
 
     document.querySelector('#level').value=btn.dataset.level;
-    renderOpportunities();
+    updateFilterURL();renderOpportunities();
   });
 });
 document.querySelector('#export-opportunities').addEventListener('click',exportCurrentOpportunities);
+document.querySelector('#share-filters').addEventListener('click',shareFilters);
+document.querySelector('#retry-load').addEventListener('click',load);
 load();
 </script>
 </body>
