@@ -1705,6 +1705,20 @@ body{
 
 <script src="export.js"></script>
 <script>
+function cleanSummary(value){
+  let text=String(value||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/\s+/g,' ').trim();
+  if(/^(?:设为首页|当前位置|首页\s*>)/.test(text)){
+    const start=text.search(/各(?:有关|相关|申报|项目承担)单位[：:]/);
+    if(start<0)return '';
+    text=text.slice(start);
+  }
+  return text.split(/function\s+pagestat\s*\(|Produced By CMS|(?:©\s*)?版权所有|京ICP备|京公网安备|关闭\s*中央网络安全|【打印】|【关闭】|政策性文件留言咨询|#div_div\s*\{|\/\*分享\*\/|const\s+token\s*=|\$\(function\s*\(/)[0].trim();
+}
+function compactSummary(value){
+  const text=cleanSummary(value);
+  if(!text)return '摘要待更新，请点击标题查看官方原文';
+  return text.length>180?text.slice(0,180).trimEnd()+'…':text;
+}
 const state={opportunities:[],teams:[],coverage:null,metadata:null,opportunitiesAvailable:false};
 const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
 const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
@@ -1844,7 +1858,7 @@ function renderOpportunities(){
           </h3>
 
           <p class="portal-summary">
-            ${esc(x.summary||'暂无摘要')}
+            ${esc(compactSummary(x.summary))}
           </p>
 
           <div class="portal-tags">
