@@ -1670,6 +1670,7 @@ body{
     </div>
   </div>
 
+  <p id="team-health" role="status" style="color:var(--muted);line-height:1.7">团队采集状态读取中…</p>
   <div id="team-grid" class="team-grid">
     <div class="loading">正在读取获批团队快照…</div>
   </div>
@@ -1917,6 +1918,10 @@ function renderOpportunities(){
 }
 function renderTeams(){
   const host=document.querySelector('#team-grid');
+  const status=state.teamStatus;
+  document.querySelector('#team-health').textContent=status
+    ? `已配置 ${status.configuredSources} 个高校来源；${status.lastCheckedAt?'最近巡检 '+fmtDate(status.lastCheckedAt,true):'尚未完成高校来源巡检'}；已核验 ${status.verifiedCount} 条，待核验 ${status.pendingReviewCount} 条（含拟立项公示及信息不完整的候选）。`
+    : '团队采集状态未知；下方历史记录不代表近期新增。';
 
   if(!state.teams.length){
     host.innerHTML='<div class="empty">暂无已核验团队数据。</div>';
@@ -1959,7 +1964,7 @@ function renderTeams(){
             </div>
 
             <div class="team-date">
-              ${esc(fmtDate(x.newsPublishedAt))}
+              ${esc(fmtDate(x.newsPublishedAt))} · ${x.verificationStatus==='verified'?'已核验':'历史导入'}
             </div>
 
           </div>
@@ -2154,11 +2159,12 @@ async function load(){
   const feeds=[['opportunities','items'],['coverage','coverage'],['approved-teams','items'],['metadata','object']];
   const results=await Promise.allSettled(feeds.map(([name,kind])=>fetchSnapshot(`data/${name}.json`,kind)));
   const [oj,cj,tj,mj]=results.map(result=>result.status==='fulfilled'?result.value:null);
-  state.opportunitiesAvailable=!!oj;state.opportunities=oj?.items||[];state.coverage=cj;state.teams=tj?.items||[];state.metadata=mj;
+  state.opportunitiesAvailable=!!oj;state.opportunities=oj?.items||[];state.coverage=cj;state.teams=tj?.items||[];state.teamStatus=tj?.collectionStatus||null;state.metadata=mj;
   const messages=[];
   try{
     renderStats();renderCoverage();
     if(tj)renderTeams();else{
+      document.querySelector('#team-health').textContent='团队采集状态未知';
       document.querySelector('#team-grid').innerHTML='<div class="error">团队快照读取失败，可重试；不影响课题浏览。</div>';
       document.querySelector('#hero-teams').textContent='未知';
     }

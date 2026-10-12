@@ -62,3 +62,5 @@ test('legacy navigation and inline scripts never replace the notice summary',()=
 });
 
 test('CAC header print controls do not hide the actual article',()=>{const p=page();assert.equal(p.run(`compactSummary('设为首页加入收藏 当前位置：首页 【打印】【纠错】 标题各有关单位：征集委员通知。 关闭 中央网络安全和信息化委员会办公室 版权所有')`),'各有关单位：征集委员通知。');});
+test('team status distinguishes configured sources from actual completed checks',()=>{const p=page();p.run(`state.teamStatus={configuredSources:4,checkedSources:0,lastCheckedAt:null,pendingReviewCount:2,verifiedCount:0};renderTeams()`);assert.match(p.node('#team-health').textContent,/尚未/);assert.match(p.node('#team-health').textContent,/2/);});
+test('missing team status never borrows the opportunity sync timestamp',()=>{const p=page();p.run('renderTeams()');assert.match(p.node('#team-health').textContent,/未知/)});
