@@ -1467,6 +1467,30 @@ body{
   .result-actions .result-hint{width:100%}
   .result-actions button{max-width:100%;white-space:normal}
 }
+
+/* Compact discovery layout and accessible advanced filters. */
+.filters{grid-template-columns:minmax(200px,1fr) 150px auto;align-items:start}
+.advanced-filters{grid-column:1/-1;grid-row:2}
+.advanced-filters summary{cursor:pointer;color:var(--blue);padding:8px 0}
+.advanced-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding-top:8px}
+.pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin:22px 0}
+.related-notices{margin:12px 0;font-size:13px;line-height:1.7}.related-notices summary{cursor:pointer;color:var(--blue)}
+.related-notices p{padding:8px 0;border-bottom:1px solid var(--line)}.related-notices span{color:var(--muted)}
+.portal-card{grid-template-columns:64px minmax(0,1.35fr) minmax(350px,1fr)}
+.portal-level svg{width:38px;height:38px}
+.portal-meta-item:nth-child(3) .portal-meta-value{color:var(--blue);font-weight:700}
+:focus-visible{outline:3px solid #7aaaf5;outline-offset:3px}
+@media(max-width:1000px){.portal-card{grid-template-columns:1fr}.portal-level{display:none}}
+@media(max-width:580px){
+ .hero{padding:0;min-height:0}.hero-inner{padding:20px 16px}.hero h1{font-size:29px;margin:8px 0}.hero .eyebrow{font-size:11px}
+ .hero .hero-copy,.hero-subtitle,.hero-art,.hero:before,.hero:after{display:none}
+ .hero-stats{margin-top:14px;gap:0;grid-template-columns:repeat(4,minmax(0,1fr))}.hero-stat{padding:4px 8px;border:0;min-width:0}.hero-stat:last-child{display:none}.hero-stat-label{font-size:10px}.hero-stat-value{font-size:23px}
+ .hero .hero-meta{margin-top:12px;font-size:11px;gap:5px}.section{margin-top:24px}
+ .filters{padding:10px;grid-template-columns:1fr auto;gap:8px}.filters .search{grid-column:1/-1}
+ .advanced-filters{grid-row:3}.advanced-controls{grid-template-columns:1fr 1fr}
+ .portal-card{padding:16px;gap:12px}.portal-title{font-size:17px}.portal-summary{font-size:13px}
+ .result-hint{display:none}.result-actions{gap:8px}.export-button{font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -1509,7 +1533,7 @@ body{
         </div>
 
         <div class="hero-stat">
-          <span class="hero-stat-label">监测网站</span>
+          <span class="hero-stat-label">已配置来源</span>
           <span class="hero-stat-value" id="hero-sources">…</span>
         </div>
 
@@ -1629,19 +1653,16 @@ body{
 
   <section id="opportunities" class="section">
     <div class="section-head"><div><p class="section-kicker">Opportunity Radar</p><h2>申报机会</h2></div><div class="section-note">优先展示正在申报与即将发布项目</div></div>
-    <div class="quick-levels">
-  <button class="quick-level active" data-level="">全部机会</button>
-  <button class="quick-level" data-level="national">国家级</button>
-  <button class="quick-level" data-level="provincial">省级</button>
-  <button class="quick-level" data-level="municipal">市级</button>
-</div>
     <div class="filters">
-      <input id="q" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
-      <select id="stage" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
-      <select id="level" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
-      <select id="province" class="control"><option value="">全部地区</option></select>
-      <select id="topic" class="control"><option value="">全部方向</option></select>
+      <input id="q" aria-label="搜索课题" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
+      <select id="stage" aria-label="申报阶段" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
+      <details class="advanced-filters"><summary>更多筛选 · 层级、地区、方向、排序</summary><div class="advanced-controls">
+      <select id="level" aria-label="项目层级" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
+      <select id="province" aria-label="所在地区" class="control"><option value="">全部地区</option></select>
+      <select id="topic" aria-label="研究方向" class="control"><option value="">全部方向</option></select>
       <select id="sort" class="control" aria-label="排序方式"><option value="default">综合排序</option><option value="deadline">截止时间从近到远</option></select>
+      </div></details>
+      <button id="reset-filters" type="button" class="export-button">重置筛选</button>
     </div>
     <p id="data-health" role="status" aria-live="polite" style="line-height:1.7;color:var(--muted);margin:12px 0"></p>
     <button id="retry-load" class="export-button" type="button" hidden>重新读取数据</button>
@@ -1654,7 +1675,9 @@ body{
         <button id="export-opportunities" class="export-button" type="button" disabled aria-label="导出当前筛选结果">导出当前筛选结果</button>
       </div>
     </div>
+    <p id="active-filters" class="section-note" aria-live="polite"></p>
     <div id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
+    <nav id="pagination" class="pagination" aria-label="课题分页"></nav>
   </section>
 
 <section id="teams" class="section">
@@ -1705,23 +1728,16 @@ body{
   <footer><span>Q·RADAR 量子课题雷达</span><span id="footer-meta">静态快照由 GitHub Pages 提供</span></footer>
 </main>
 
+<script src="quality.js"></script>
 <script src="export.js"></script>
 <script>
-function cleanSummary(value){
-  let text=String(value||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/\s+/g,' ').trim();
-  if(/^(?:设为首页|当前位置|首页\s*>)/.test(text)){
-    const start=text.search(/各(?:有关|相关|申报|项目承担)单位[：:]/);
-    if(start<0)return '';
-    text=text.slice(start);
-  }
-  return text.split(/function\s+pagestat\s*\(|Produced By CMS|(?:©\s*)?版权所有|京ICP备|京公网安备|关闭\s*中央网络安全|【打印】|【关闭】|政策性文件留言咨询|#div_div\s*\{|\/\*分享\*\/|const\s+token\s*=|\$\(function\s*\(/)[0].trim();
-}
+function cleanSummary(value){return QRadarQuality.cleanOpportunitySummary(value)}
 function compactSummary(value){
   const text=cleanSummary(value);
   if(!text)return '摘要待更新，请点击标题查看官方原文';
   return text.length>180?text.slice(0,180).trimEnd()+'…':text;
 }
-const state={opportunities:[],teams:[],coverage:null,metadata:null,opportunitiesAvailable:false};
+const state={page:1,opportunities:[],teams:[],coverage:null,metadata:null,opportunitiesAvailable:false};
 const levelMap={national:'国家级',provincial:'省级',municipal:'市级'};
 const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
 function deadlineTimestamp(value){
@@ -1812,7 +1828,12 @@ function renderOpportunities(){
   if(!state.opportunitiesAvailable)return;
   const filtered=getFilteredOpportunities();
 
-  document.querySelector('#result-count').textContent=`共 ${filtered.length} 条结果`;
+  const groups=QRadarQuality.groupOpportunities(filtered);
+  const pages=Math.max(1,Math.ceil(groups.length/12));
+  state.page=Math.min(state.page,pages);
+  document.querySelector('#result-count').textContent=`共 ${filtered.length} 条通知 · ${groups.length} 组机会`;
+  document.querySelector('#pagination').innerHTML=groups.length?`<button class="export-button" data-page="${state.page-1}" ${state.page===1?'disabled':''}>上一页</button><span>第 ${state.page} / ${pages} 页</span><button class="export-button" data-page="${state.page+1}" ${state.page===pages?'disabled':''}>下一页</button>`:'';
+  document.querySelector('#active-filters').textContent=filterIds.filter(id=>document.querySelector('#'+id).value && document.querySelector('#'+id).value!=='default').map(id=>{const c=document.querySelector('#'+id);return id==='q'?`搜索：${c.value}`:c.selectedOptions?.[0]?.textContent||c.value}).join(' · ');
   const exportButton=document.querySelector('#export-opportunities');
   if(exportButton)exportButton.disabled=filtered.length===0;
   const exportStatus=document.querySelector('#export-status');
@@ -1825,7 +1846,8 @@ function renderOpportunities(){
     return
   }
 
-  host.innerHTML=filtered.map(x=>{
+  host.innerHTML=groups.slice((state.page-1)*12,state.page*12).map(group=>{
+    const x=group[0];
     const levelName=levelMap[x.level]||x.level||'未分类';
     const region=[x.province,x.city].filter(Boolean).join(' · ')||'全国';
     const currentStage=effectiveStage(x);
@@ -1855,7 +1877,7 @@ function renderOpportunities(){
             <a href="${esc(x.sourceUrl)}"
                target="_blank"
                rel="noopener noreferrer">
-              ${esc(x.projectName)}
+              ${esc(x.displayTitle||x.projectName)}
             </a>
           </h3>
 
@@ -1863,6 +1885,7 @@ function renderOpportunities(){
             ${esc(compactSummary(x.summary))}
           </p>
 
+          ${group.length>1?`<details class="related-notices"><summary>同专项相关通知（${group.length} 份，含本条）</summary>${group.map(n=>`<p><a href="${esc(n.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(n.displayTitle||n.projectName)}</a><br><span>${esc(n.authority||'')} · ${esc(n.province||'全国')} · ${esc(deadlineText(n))}</span></p>`).join('')}</details>`:''}
           <div class="portal-tags">
             ${(x.topicTags||[])
               .map(t=>`<span class="tag">${esc(t)}</span>`)
@@ -1908,7 +1931,7 @@ function renderOpportunities(){
                href="${esc(x.sourceUrl)}"
                target="_blank"
                rel="noopener noreferrer">
-              查看详情 →
+              官方原文 →
             </a>
           </div>
         </div>
@@ -2165,7 +2188,7 @@ async function load(){
   const feeds=[['opportunities','items'],['coverage','coverage'],['approved-teams','items'],['metadata','object']];
   const results=await Promise.allSettled(feeds.map(([name,kind])=>fetchSnapshot(`data/${name}.json`,kind)));
   const [oj,cj,tj,mj]=results.map(result=>result.status==='fulfilled'?result.value:null);
-  state.opportunitiesAvailable=!!oj;state.opportunities=oj?.items||[];state.coverage=cj;state.teams=tj?.items||[];state.teamStatus=tj?.collectionStatus||null;state.metadata=mj;
+  state.opportunitiesAvailable=!!oj;state.opportunities=(oj?.items||[]).map(QRadarQuality.normalizeOpportunity);state.coverage=cj;state.teams=tj?.items||[];state.teamStatus=tj?.collectionStatus||null;state.metadata=mj;
   const messages=[];
   try{
     renderStats();renderCoverage();
@@ -2205,7 +2228,7 @@ async function load(){
     retry.hidden=false;
   }finally{loading=false;retry.disabled=false}
 }
-filterIds.forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',()=>{updateFilterURL();renderOpportunities()}));
+filterIds.forEach(id=>document.querySelector(`#${id}`).addEventListener(id==='q'?'input':'change',()=>{state.page=1;updateFilterURL();renderOpportunities()}));
 document.querySelectorAll('.quick-level').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.quick-level').forEach(x=>x.classList.remove('active'));
@@ -2217,6 +2240,8 @@ document.querySelectorAll('.quick-level').forEach(btn=>{
 });
 document.querySelector('#export-opportunities').addEventListener('click',exportCurrentOpportunities);
 document.querySelector('#share-filters').addEventListener('click',shareFilters);
+document.querySelector('#reset-filters').addEventListener('click',()=>{filterIds.forEach(id=>document.querySelector('#'+id).value=id==='sort'?'default':'');state.page=1;updateFilterURL();renderOpportunities()});
+document.querySelector('#pagination').addEventListener('click',event=>{const button=event.target.closest('[data-page]');if(!button||button.disabled)return;state.page=Number(button.dataset.page);renderOpportunities();document.querySelector('#opportunities').scrollIntoView({block:'start'})});
 document.querySelector('#retry-load').addEventListener('click',load);
 load();
 </script>

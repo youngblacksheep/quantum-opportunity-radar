@@ -8,6 +8,7 @@ function page(feeds={}){
  const nodes=new Map();
  const node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',innerHTML:'',disabled:false,hidden:false,options:[],addEventListener(){},insertAdjacentHTML(){},classList:{toggle(){},add(){},remove(){}}});return nodes.get(id)};
  const ctx=vm.createContext({document:{querySelector:node,querySelectorAll:()=>[]},URL,URLSearchParams,Intl,Date,AbortController,setTimeout,clearTimeout,console:{error(){}},location:{href:'https://example.com/?q=量子&stage=open#opportunities',search:'?q=量子&stage=open'},history:{replaceState(){}},navigator:{},fetch:async path=>{const feed=feeds[path];return {ok:!!feed,json:async()=>feed}}});
+ vm.runInContext(readFileSync(new URL('../quality.js',import.meta.url),'utf8'),ctx);
  vm.runInContext(script,ctx);
  return {run:code=>vm.runInContext(code,ctx),node};
 }
@@ -65,3 +66,10 @@ test('CAC header print controls do not hide the actual article',()=>{const p=pag
 test('team status distinguishes configured sources from actual completed checks',()=>{const p=page();p.run(`state.teamStatus={configuredSources:4,checkedSources:0,lastCheckedAt:null,pendingReviewCount:2,verifiedCount:0};renderTeams()`);assert.match(p.node('#team-health').textContent,/尚未/);assert.match(p.node('#team-health').textContent,/2/);});
 test('missing team status never borrows the opportunity sync timestamp',()=>{const p=page();p.run('renderTeams()');assert.match(p.node('#team-health').textContent,/未知/)});
 test('per-source status distinguishes failures, unvisited sources and no extracted records',()=>{const p=page();p.run(`state.teamStatus={configuredSources:3,checkedSources:2,verifiedCount:0,pendingReviewCount:0,sources:[{authority:'甲大学',status:'failure',error:'timeout'},{authority:'乙大学',status:'not_checked'},{authority:'丙大学',status:'success',publishedCount:0,reviewCount:0}]};renderTeams()`);const html=p.node('#team-source-status').innerHTML;assert.match(html,/抓取失败/);assert.match(html,/尚未巡检/);assert.match(html,/本轮未提取到/)});
+test('pagination limits visible groups while export filtering retains every record',()=>{
+ const p=page();p.run(`state.opportunitiesAvailable=true;state.opportunities=Array.from({length:25},(_,i)=>({id:'r'+i,projectName:'通知'+i,stage:'open',sourceUrl:'https://example.com/'+i}));renderOpportunities()`);
+ assert.equal((p.node('#opportunity-list').innerHTML.match(/<article /g)||[]).length,12);
+ assert.equal(p.run('getFilteredOpportunities().length'),25);
+ p.run('state.page=3;renderOpportunities()');assert.equal((p.node('#opportunity-list').innerHTML.match(/<article /g)||[]).length,1);
+ p.node('#q').value='无匹配';p.run('renderOpportunities()');assert.equal(p.node('#pagination').innerHTML,'');
+});
