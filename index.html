@@ -1940,6 +1940,11 @@ function renderOpportunities(){
     `
   }).join('')
 }
+function sourceErrorText(code){
+ const labels={timeout:'官网响应超时',network_error:'网络连接失败',untrusted_redirect:'官网跳转目标需核对',robots_timeout:'访问规则读取超时',robots_http_error:'访问规则读取失败',robots_disallowed:'官网限制自动抓取',robots_explicitly_disallowed:'官网限制自动抓取',ucap_articlelist_missing:'栏目结构已变化',sync_budget_exhausted:'本轮抓取预算已用完'};
+ const http={'403':'官网拒绝自动访问','404':'页面入口失效','526':'官网证书连接失败','429':'官网请求频率限制'};
+ return labels[code]||(String(code||'').startsWith('http_error:')?(http[String(code).split(':')[1]]||'官网服务暂不可用'):code||'原因待核实');
+}
 function renderTeams(){
   const host=document.querySelector('#team-grid');
   const status=state.teamStatus;
@@ -1950,7 +1955,7 @@ function renderTeams(){
   document.querySelector('#team-source-status').innerHTML=(status?.sources||[]).map(source=>{
     const labels={not_checked:'尚未巡检',failure:'抓取失败',partial:'部分抓取失败'};
     const label=labels[source.status]||(source.publishedCount||source.reviewCount?`本轮入库 ${source.publishedCount||0} 条，待核验 ${source.reviewCount||0} 条`:'已检查，本轮未提取到符合条件的记录');
-    return `<li>${esc(source.authority)}：${esc(label)}${source.error?'（'+esc(source.error)+'）':''}</li>`;
+    return `<li>${esc(source.authority)}：${esc(label)}${source.error?'（'+esc(sourceErrorText(source.error))+'）':''}<br><small>最近检查：${esc(source.lastCheckedAt?fmtDate(source.lastCheckedAt,true):'尚未巡检')} · 最近完整抓取：${esc(source.lastSuccessfulAt?fmtDate(source.lastSuccessfulAt,true):Object.hasOwn(source,'lastSuccessfulAt')?'暂无成功记录':'状态未知')}</small></li>`;
   }).join('');
   if(!state.teams.length){
     host.innerHTML='<div class="empty">暂无已核验团队数据。</div>';
@@ -2057,7 +2062,7 @@ function renderCoverage(){
     return;
   }
   const failures=c.failedSources;
-  document.querySelector('#failure-list').innerHTML=failures.length?failures.map(x=>`<li><span>${esc(x.sourceId)} · ${esc(fmtDate(x.finishedAt,true))}</span><span class="failure-code">${esc(x.errorSummary||x.status)}</span></li>`).join(''):'<li><span>近期没有记录到抓取异常。</span><span></span></li>'
+  document.querySelector('#failure-list').innerHTML=failures.length?failures.map(x=>`<li><span>${esc(x.sourceId)} · ${esc(fmtDate(x.finishedAt,true))}</span><span class="failure-code">${esc(sourceErrorText(x.errorSummary||x.status))}<br><small>最近完整抓取：${esc(x.lastSuccessfulAt?fmtDate(x.lastSuccessfulAt,true):c.sourceHealthAvailable?'暂无成功记录':'状态未知')}</small></span></li>`).join(''):'<li><span>近期没有记录到抓取异常。</span><span></span></li>'
 }
 function fillFilters(){
   const provinces=[...new Set(state.opportunities.map(x=>x.province).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
