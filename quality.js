@@ -35,8 +35,23 @@ function opportunityGroupKey(item){
  return `${m[1]}:${m[2]}:${batch?.[1]||'未注明批次'}:${/征求意见/.test(t)?'consultation':'application'}`;
 }
 function groupOpportunities(items){
+ const titleOf=item=>String(item.displayTitle||item.projectName||'').normalize('NFKC').replace(/\s|[\u200b-\u200d\ufeff]/g,'');
+ const originals=new Map();
+ for(const item of items){
+  const title=titleOf(item);if(/转发/.test(title))continue;
+  if(!originals.has(title))originals.set(title,[]);originals.get(title).push(item);
+ }
+ const targets=new Map();
+ for(const item of items){
+  const match=titleOf(item).match(/^(?:关于)?转发《(.+)》的通知$/);
+  const candidates=match&&originals.get(match[1]);
+  if(candidates?.length===1)targets.set(item,candidates[0]);
+ }
  const groups=new Map();
- for(const item of items){const key=opportunityGroupKey(item);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item)}
- return [...groups.values()];
+ for(const item of items){const key=opportunityGroupKey(targets.get(item)||item);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item)}
+ return [...groups.values()].map(group=>{
+  const primary=group.find(item=>group.some(other=>targets.get(other)===item));
+  return primary?[primary,...group.filter(item=>item!==primary)]:group;
+ });
 }
 globalThis.QRadarQuality={cleanOpportunitySummary,inferDeadline,normalizeOpportunity,opportunityGroupKey,groupOpportunities};

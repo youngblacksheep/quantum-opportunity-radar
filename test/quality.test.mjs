@@ -34,3 +34,15 @@ test('missing batch information cannot merge notices',()=>{
  const projectName='国家重点研发计划“量子材料”重点专项2026年度项目申报通知';
  assert.equal(q.groupOpportunities([{id:'a',projectName},{id:'b',projectName}]).length,2);
 });
+
+test('explicit repost uses original as primary and retains local details',()=>{
+ const title='关于组织申报国家网络空间安全国家科技重大专项第四批项目的通知（公开类）';
+ const original={id:'national',projectName:title,deadlineAt:'2026-11-15'};
+ const repost={id:'wuhan',projectName:`关于转发《${title}》的通知`,deadlineAt:'2026-11-12'};
+ const groups=q.groupOpportunities([repost,original]);
+ assert.equal(groups.length,1);assert.equal(groups[0][0].id,'national');
+ assert.equal(groups[0][1].deadlineAt,'2026-11-12');
+ assert.equal(q.groupOpportunities([repost])[0][0].id,'wuhan');
+ assert.equal(q.groupOpportunities([repost,{...original,projectName:title.replace('第四批','第五批')}]).length,2);
+ assert.equal(q.groupOpportunities([repost,original,{...original,id:'another'}]).length,3);
+});
