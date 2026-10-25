@@ -73,3 +73,16 @@ test('pagination limits visible groups while export filtering retains every reco
  p.run('state.page=3;renderOpportunities()');assert.equal((p.node('#opportunity-list').innerHTML.match(/<article /g)||[]).length,1);
  p.node('#q').value='无匹配';p.run('renderOpportunities()');assert.equal(p.node('#pagination').innerHTML,'');
 });
+
+test('deadline alerts respect China calendar, exact cutoff, and unknown dates',()=>{
+ const p=page();const now='2026-10-25T10:00:00+08:00';
+ const alert=(item)=>p.run(`deadlineAlert(${JSON.stringify(item)},Date.parse('${now}'))`);
+ assert.equal(alert({stage:'open',deadlineAt:'2026-10-25'}),'今日截止');
+ assert.equal(alert({stage:'open',deadlineAt:'2026-10-26T00:00:00+08:00'}),'明日截止');
+ assert.equal(alert({stage:'open',deadlineAt:'2026-10-29T23:59:00+08:00'}),'4 天后截止');
+ for(const item of [{stage:'open'},{stage:'open',deadlineAt:'invalid'},{stage:'open',deadlineAt:'2026-10-25T09:00:00+08:00'},{stage:'closed',deadlineAt:'2026-10-26'},{stage:'upcoming',deadlineAt:'2026-10-26'},{stage:'open',deadlineAt:'2026-11-20'}])assert.equal(alert(item),'');
+});
+test('closing filter includes only open records with a cutoff in the next seven days',()=>{
+ const p=page();p.node('#stage').value='closing';
+ assert.equal(p.run(`state.opportunities=[{id:'soon',stage:'open',deadlineAt:new Date(Date.now()+86400000).toISOString()},{id:'late',stage:'open',deadlineAt:new Date(Date.now()+10*86400000).toISOString()},{id:'unknown',stage:'open'},{id:'past',stage:'open',deadlineAt:'2000-01-01'}];getFilteredOpportunities().map(x=>x.id).join(',')`),'soon');
+});

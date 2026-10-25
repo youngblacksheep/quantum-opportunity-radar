@@ -1521,6 +1521,8 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
 @media(max-width:1100px){.hero-art{right:-80px;width:410px;opacity:.7}.hero-content{width:72%}.portal-card[class*="level-"]{grid-template-columns:48px minmax(0,1fr)}.portal-meta-grid{grid-column:2}}
 @media(max-width:700px){.hero-inner{padding:26px 20px;min-height:0}.hero-content{width:100%;max-width:none}.hero h1{font-size:30px}.hero-art{display:none}.hero-subtitle{display:block;font-size:13px;margin-top:10px}.hero-stats{margin-top:24px}.hero-stat,.hero-stat:last-child{padding:0 10px;display:block}.hero-stat:first-child{padding-left:0}.hero-stat-label{font-size:10px}.hero-stat-value{font-size:25px}.hero .hero-meta{margin-top:20px;font-size:10px}.portal-card[class*="level-"]{padding:18px;grid-template-columns:minmax(0,1fr);gap:12px}.portal-level{display:none}.portal-meta-grid{grid-column:1}.portal-title{font-size:17px}.hero .hero-meta .update-label{display:none}}
 
+.portal-card .badge.deadline-alert{background:#fff0df;color:#943b12;border:1px solid #f4d3b0}
+#opportunity-list{scroll-margin-top:90px}#opportunity-list:focus-visible{outline:2px solid #2162ae;outline-offset:5px}
 </style>
 </head>
 <body>
@@ -1612,7 +1614,7 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
     <div class="section-head"><div><p class="section-kicker">Opportunity Radar</p><h2>申报机会</h2></div><div class="section-note">优先展示正在申报与即将发布项目</div></div>
     <div class="filters">
       <input id="q" aria-label="搜索课题" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
-      <select id="stage" aria-label="申报阶段" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
+      <select id="stage" aria-label="申报阶段" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="closing">7 天内截止</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
       <details class="advanced-filters"><summary>更多筛选 · 层级、地区、方向、排序</summary><div class="advanced-controls">
       <select id="level" aria-label="项目层级" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
       <select id="province" aria-label="所在地区" class="control"><option value="">全部地区</option></select>
@@ -1633,7 +1635,7 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
       </div>
     </div>
     <p id="active-filters" class="section-note" aria-live="polite"></p>
-    <div id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
+    <div tabindex="-1" aria-label="课题列表" id="opportunity-list" class="cards"><div class="loading">正在读取课题快照…</div></div>
     <nav id="pagination" class="pagination" aria-label="课题分页"></nav>
   </section>
 
@@ -1700,6 +1702,16 @@ const stageMap={open:'正在申报',upcoming:'待发布',closed:'已截止'};
 function deadlineTimestamp(value){
   if(!value)return NaN;
   return Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(value)?`${value}T23:59:59.999+08:00`:value);
+}
+function isClosingSoon(x,now=Date.now()){
+ const deadline=deadlineTimestamp(x.deadlineAt);
+ return x.stage==='open' && Number.isFinite(deadline) && deadline>=now && deadline<=now+7*86400000;
+}
+function deadlineAlert(x,now=Date.now()){
+ if(!isClosingSoon(x,now))return '';
+ const chinaDay=time=>Math.floor((time+8*3600000)/86400000);
+ const days=chinaDay(deadlineTimestamp(x.deadlineAt))-chinaDay(now);
+ return days===0?'今日截止':days===1?'明日截止':`${days} 天后截止`;
 }
 function effectiveStage(x){
   if(x.stage==='open' && x.deadlineAt){
@@ -1774,7 +1786,7 @@ function getFilteredOpportunities(){
     ].join(' ').toLowerCase();
 
     return(!q||hay.includes(q))
-      &&(!stage||effectiveStage(x)===stage)
+      &&(!stage||(stage==='closing'?isClosingSoon(x):effectiveStage(x)===stage))
       &&(!level||x.level===level)
       &&(!province||x.province===province)
       &&(!topic||(x.topicTags||[]).includes(topic))
@@ -1827,6 +1839,7 @@ function renderOpportunities(){
               ${esc(levelName)}
             </span>
 
+            ${deadlineAlert(x)?`<span class="badge deadline-alert">${esc(deadlineAlert(x))}</span>`:''}
             ${x.featured?'<span class="badge featured">重点关注</span>':''}
           </div>
 
@@ -2203,7 +2216,7 @@ document.querySelectorAll('.quick-level').forEach(btn=>{
 document.querySelector('#export-opportunities').addEventListener('click',exportCurrentOpportunities);
 document.querySelector('#share-filters').addEventListener('click',shareFilters);
 document.querySelector('#reset-filters').addEventListener('click',()=>{filterIds.forEach(id=>document.querySelector('#'+id).value=id==='sort'?'default':'');state.page=1;updateFilterURL();renderOpportunities()});
-document.querySelector('#pagination').addEventListener('click',event=>{const button=event.target.closest('[data-page]');if(!button||button.disabled)return;state.page=Number(button.dataset.page);renderOpportunities();document.querySelector('#opportunities').scrollIntoView({block:'start'})});
+document.querySelector('#pagination').addEventListener('click',event=>{const button=event.target.closest('[data-page]');if(!button||button.disabled)return;state.page=Number(button.dataset.page);renderOpportunities();document.querySelector('#opportunity-list').focus({preventScroll:true});document.querySelector('#opportunity-list').scrollIntoView({block:'start'})});
 document.querySelector('#retry-load').addEventListener('click',load);
 load();
 </script>
