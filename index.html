@@ -2207,5 +2207,19 @@ document.querySelector('#pagination').addEventListener('click',event=>{const but
 document.querySelector('#retry-load').addEventListener('click',load);
 load();
 </script>
+<!-- Private reports live in the owner's Cloudflare account. Beacon tokens only allow collection. -->
+<script type="module">
+const radarAnalyticsTokens={
+ 'quantum-opportunity-radar.quantum-radar-2026.workers.dev':'f52f1e1a02d542208abc93e75430bac9',
+ 'youngblacksheep.github.io':'e11edd53c3674105a8033393ad328802'
+};
+const radarAnalyticsToken=radarAnalyticsTokens[location.hostname];
+if(radarAnalyticsToken && (location.hostname!=='youngblacksheep.github.io'||location.pathname.startsWith('/quantum-opportunity-radar/'))){
+ const beacon=document.createElement('script');
+ beacon.type='module';beacon.src='https://static.cloudflareinsights.com/beacon.min.js';
+ beacon.dataset.cfBeacon=JSON.stringify({token:radarAnalyticsToken});
+ document.head.appendChild(beacon);
+}
+</script>
 </body>
 </html>
