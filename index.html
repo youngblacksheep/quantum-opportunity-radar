@@ -1523,6 +1523,20 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
 
 .portal-card .badge.deadline-alert{background:#fff0df;color:#943b12;border:1px solid #f4d3b0}
 #opportunity-list{scroll-margin-top:90px}#opportunity-list:focus-visible{outline:2px solid #2162ae;outline-offset:5px}
+
+/* Approved glass radar artwork; HTML text and live metrics stay selectable. */
+.hero{background:#142f4a linear-gradient(90deg,rgba(13,34,55,.35),rgba(13,34,55,.15) 45%,transparent 65%);position:relative;isolation:isolate;overflow:hidden}
+.hero:before{content:"";display:block;position:absolute;inset:0;background:url('assets/radar-glass-v1.jpg') center center/cover no-repeat;opacity:1;z-index:-2;pointer-events:none;border-radius:0;transform:none;width:auto;height:auto}
+.hero:after{content:"";display:block;position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,34,55,.55) 0%,rgba(13,34,55,.65) 35%,transparent 65%);z-index:-1;pointer-events:none}
+.hero-inner{min-height:370px;padding-top:54px;padding-bottom:36px}
+.hero-content{width:54%;max-width:710px}
+.hero-subtitle{color:#d3dfec;font-size:15px}
+.hero-stats{max-width:560px}
+.hero .hero-meta{color:#d0deec;font-size:11px}
+.hero-stat-label{color:#c7d8e8}
+@media(min-width:1700px){.hero:before{background-size:100% auto}}
+@media(max-width:1100px){.hero-content{width:65%}.hero:before{background-position:58% center}.hero:after{content:"";display:block;position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,34,55,.8),rgba(13,34,55,.1));z-index:-1;pointer-events:none}}
+@media(max-width:700px){.hero-inner{min-height:0;padding:26px 20px}.hero-content{width:100%}.hero:before{background-position:68% center;opacity:.45}.hero:after{background:rgba(13,34,55,.5)}.hero-subtitle{font-size:13px}.hero .hero-meta{font-size:10px}}
 </style>
 </head>
 <body>
@@ -1579,33 +1593,7 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
       </div>
     </div>
 
-    <div class="hero-art" aria-hidden="true">
-<svg viewBox="0 0 600 420" fill="none" xmlns="http://www.w3.org/2000/svg">
- <defs>
-  <radialGradient id="radar-haze"><stop stop-color="#3ba5b4" stop-opacity=".23"/><stop offset="1" stop-color="#3ba5b4" stop-opacity="0"/></radialGradient>
-  <linearGradient id="radar-surface" x1="130" y1="80" x2="460" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#223c53"/><stop offset="1" stop-color="#0c1e32"/></linearGradient>
-  <linearGradient id="radar-scan"><stop stop-color="#80eed5" stop-opacity="0"/><stop offset="1" stop-color="#80eed5" stop-opacity=".28"/></linearGradient>
-  <filter id="radar-glow"><feGaussianBlur stdDeviation="5"/></filter>
- </defs>
- <ellipse cx="310" cy="245" rx="275" ry="175" fill="url(#radar-haze)"/>
- <ellipse cx="310" cy="279" rx="211" ry="102" fill="#030e1b" opacity=".5"/>
- <g transform="translate(310 212) rotate(-19) scale(1 .66)">
-  <circle cy="20" r="196" fill="#0b1b2d" stroke="#355064"/>
-  <circle r="196" fill="url(#radar-surface)" stroke="#658392" stroke-opacity=".6"/>
-  <circle r="182" stroke="#aacbd3" stroke-opacity=".3" stroke-dasharray="1 10" stroke-width="5"/>
-  <g stroke="#7594a3" stroke-opacity=".24"><circle r="154"/><circle r="112"/><circle r="70"/><path d="M-164 0H164M0-164V164"/></g>
-  <path d="M0 0L-112-112A158 158 0 0 1 158 0Z" fill="url(#radar-scan)"/>
-  <path d="M0 0H158" stroke="#99f7df" stroke-width="1.5"/>
-  <g fill="#8cf1d8"><circle cx="105" cy="-42" r="5"/><circle cx="-57" cy="-77" r="4"/><circle cx="-98" cy="70" r="3"/></g>
-  <circle cx="105" cy="-42" r="12" stroke="#8cf1d8" stroke-opacity=".4"/>
-  <circle cx="105" cy="-42" r="11" fill="#8cf1d8" opacity=".5" filter="url(#radar-glow)"/>
-  <circle r="7" fill="#d4f9f0"/><circle r="15" stroke="#b5e9dc" stroke-opacity=".3"/>
- </g>
- <path d="M415 157L464 115H529" stroke="#83b8be" stroke-opacity=".45"/>
- <circle cx="415" cy="157" r="3" fill="#a2ecdc"/>
- <text x="470" y="104" fill="#95adb9" font-family="sans-serif" font-size="10" letter-spacing="2">OPPORTUNITY RADAR</text>
-</svg>
-    </div>
+
 
   </div>
 </section>
