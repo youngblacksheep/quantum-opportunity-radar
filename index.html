@@ -1613,7 +1613,7 @@ h2{font-family:inherit;font-weight:650;letter-spacing:0}
   <section id="opportunities" class="section">
     <div class="section-head"><div><p class="section-kicker">Opportunity Radar</p><h2>申报机会</h2></div><div class="section-note">优先展示正在申报与即将发布项目</div></div>
     <div class="filters">
-      <input id="q" aria-label="搜索课题" class="control search" type="search" placeholder="搜索项目、主管部门、摘要或标签">
+      <input id="q" aria-label="搜索课题" class="control search" type="search" placeholder="搜索课题，多个关键词用空格分隔">
       <select id="stage" aria-label="申报阶段" class="control"><option value="">全部阶段</option><option value="open">正在申报</option><option value="closing">7 天内截止</option><option value="upcoming">待发布</option><option value="closed">已截止</option></select>
       <details class="advanced-filters"><summary>更多筛选 · 层级、地区、方向、排序</summary><div class="advanced-controls">
       <select id="level" aria-label="项目层级" class="control"><option value="">全部层级</option><option value="national">国家级</option><option value="provincial">省级</option><option value="municipal">市级</option></select>
@@ -1769,23 +1769,24 @@ function levelIcon(level){
 }
 
 function getFilteredOpportunities(){
-  const q=document.querySelector('#q').value.trim().toLowerCase();
+  const normalizeSearch=value=>String(value||'').normalize('NFKC').toLowerCase();
+  const keywords=normalizeSearch(document.querySelector('#q').value).trim().split(/\s+/).filter(Boolean);
   const stage=document.querySelector('#stage').value;
   const level=document.querySelector('#level').value;
   const province=document.querySelector('#province').value;
   const topic=document.querySelector('#topic').value;
 
   return sortOpportunities(state.opportunities).filter(x=>{
-    const hay=[
+    const hay=normalizeSearch([
       x.projectName,
       x.authority,
       x.summary,
       x.province,
       x.city,
       ...(x.topicTags||[])
-    ].join(' ').toLowerCase();
+    ].join(' '));
 
-    return(!q||hay.includes(q))
+    return keywords.every(word=>hay.includes(word))
       &&(!stage||(stage==='closing'?isClosingSoon(x):effectiveStage(x)===stage))
       &&(!level||x.level===level)
       &&(!province||x.province===province)
@@ -1811,7 +1812,7 @@ function renderOpportunities(){
   const host=document.querySelector('#opportunity-list');
 
   if(!filtered.length){
-    host.innerHTML='<div class="empty">当前筛选条件下没有结果。</div>';
+    host.innerHTML=state.opportunities.length?'<div class="empty"><strong>没有符合当前条件的课题</strong><p>可减少关键词，或放宽地区、阶段等筛选条件。多个关键词需同时匹配。</p><button class="export-button" data-clear-filters>清除筛选，查看全部课题</button></div>':'<div class="empty">暂无已收录课题，请稍后再来查看。</div>';
     return
   }
 
@@ -2215,7 +2216,9 @@ document.querySelectorAll('.quick-level').forEach(btn=>{
 });
 document.querySelector('#export-opportunities').addEventListener('click',exportCurrentOpportunities);
 document.querySelector('#share-filters').addEventListener('click',shareFilters);
-document.querySelector('#reset-filters').addEventListener('click',()=>{filterIds.forEach(id=>document.querySelector('#'+id).value=id==='sort'?'default':'');state.page=1;updateFilterURL();renderOpportunities()});
+function resetFilters(){filterIds.forEach(id=>document.querySelector('#'+id).value=id==='sort'?'default':'');state.page=1;updateFilterURL();renderOpportunities()}
+document.querySelector('#reset-filters').addEventListener('click',resetFilters);
+document.querySelector('#opportunity-list').addEventListener('click',event=>{if(!event.target.closest('[data-clear-filters]'))return;resetFilters();document.querySelector('#q').focus()});
 document.querySelector('#pagination').addEventListener('click',event=>{const button=event.target.closest('[data-page]');if(!button||button.disabled)return;state.page=Number(button.dataset.page);renderOpportunities();document.querySelector('#opportunity-list').focus({preventScroll:true});document.querySelector('#opportunity-list').scrollIntoView({block:'start'})});
 document.querySelector('#retry-load').addEventListener('click',load);
 load();

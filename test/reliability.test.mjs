@@ -86,3 +86,16 @@ test('closing filter includes only open records with a cutoff in the next seven 
  const p=page();p.node('#stage').value='closing';
  assert.equal(p.run(`state.opportunities=[{id:'soon',stage:'open',deadlineAt:new Date(Date.now()+86400000).toISOString()},{id:'late',stage:'open',deadlineAt:new Date(Date.now()+10*86400000).toISOString()},{id:'unknown',stage:'open'},{id:'past',stage:'open',deadlineAt:'2000-01-01'}];getFilteredOpportunities().map(x=>x.id).join(',')`),'soon');
 });
+
+test('search matches separate keywords across fields with full-width normalization',()=>{
+ const p=page();p.run(`state.opportunities=[{id:'match',projectName:'量子计算 AI 项目',province:'广东',stage:'open',topicTags:[]},{id:'other',projectName:'量子计算',province:'北京',stage:'open',topicTags:[]}];`);
+ p.node('#q').value=' 量子　广东  ａｉ ';
+ assert.equal(p.run(`getFilteredOpportunities().map(x=>x.id).join(',')`),'match');
+ p.node('#q').value='量子 不存在';assert.equal(p.run('getFilteredOpportunities().length'),0);
+ p.node('#q').value='　 ';assert.equal(p.run('getFilteredOpportunities().length'),2);
+});
+test('empty filters offer recovery while a genuinely empty feed is distinguished',()=>{
+ const p=page();p.run(`state.opportunitiesAvailable=true;state.opportunities=[{projectName:'量子计算',stage:'open'}]`);p.node('#q').value='不存在';p.run('renderOpportunities()');
+ assert.match(p.node('#opportunity-list').innerHTML,/清除筛选/);assert.match(p.node('#opportunity-list').innerHTML,/减少关键词/);
+ p.run(`state.opportunities=[];renderOpportunities()`);assert.match(p.node('#opportunity-list').innerHTML,/暂无已收录/);assert.doesNotMatch(p.node('#opportunity-list').innerHTML,/清除筛选/);
+});
